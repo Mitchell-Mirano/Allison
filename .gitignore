@@ -1,3 +1,5 @@
 # Google App Engine generated folder
 appengine-generated/
 /env
+
+*.csv
