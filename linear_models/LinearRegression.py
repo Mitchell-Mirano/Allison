@@ -16,7 +16,7 @@ class LinearRegresion:
   def decm_dw(self, predictions):
     gradients=np.zeros(len(self.weights))
     for  i in range(len(self.weights)):
-      gradients[i]=(-2/self.labels.shape[1])*np.dot(self.labels-predictions,self.features[i])
+      gradients[i]=(-2/self.features.shape[1])*np.dot(self.labels-predictions,self.features[i])
     return gradients
   
   def bacward(self,gradients,lr):
