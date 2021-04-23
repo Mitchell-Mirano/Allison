@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-class LinearRegresion:
+class LinearRegression:
     
   def __init__(self,type_regression='simple',functions=['lineal'],regularization=None):
     self.type_regression=type_regression
