@@ -21,18 +21,21 @@ inside and not be a black box for many people.
 Now you can use Allison
 
 ## Example of Allison in Google Colab
-Clone the repository, import the requirements, 
-import  a model of Allison, for this example use Kmeans and select your features for train.
+- Clone the repository
+- import the requirements
+- import  Kmeans model  and select your features for train.
 
-![Screenshot_38](https://user-images.githubusercontent.com/67351445/115131595-d5881500-9fbe-11eb-9e19-7dfe9c7b5498.png)
+![Screenshot_81](https://user-images.githubusercontent.com/67351445/115980248-ca9a2b00-a550-11eb-969d-db791eec9754.png)
 
-Grahp your features, choose how many centroids you want to find, create a model object with Kmeans,
-train your model using  method train.Then I get your new labels and centroids
+- create a model object with the Kmeans class and use the train method for trainning.
+- the moviment_limit param is the condition for stop the training when the mean of the movements of the centroids is < movement limit
+- you can use the centroids and labels atribute for obtain the new centroids and labels
+- you can save the labels with save_labels method
 
-![Screenshot_36](https://user-images.githubusercontent.com/67351445/115131847-c0ac8100-9fc0-11eb-84c6-29789ad1f382.png)
+![Screenshot_82](https://user-images.githubusercontent.com/67351445/115980467-94f64180-a552-11eb-8053-43b18ea40823.png)
 
-Graph your characteristics with your new labels and centroids
-![Screenshot_37](https://user-images.githubusercontent.com/67351445/115131879-079a7680-9fc1-11eb-9077-c5faf15f98cb.png)
 
+- Graph your features with your new labels and centroids
+![Screenshot_83](https://user-images.githubusercontent.com/67351445/115980461-8740bc00-a552-11eb-9750-f4492db70e7f.png)
 
 
