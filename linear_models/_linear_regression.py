@@ -69,6 +69,7 @@ class LinearRegression:
       plt.figure(figsize=(12,6))
       plt.scatter(features,labels)
       plt.plot(features,predictions,c='r', lw=3)
+      plt.show()
 
   def r2_score(self, labels, predictions):
     errors=np.sum((labels-predictions)**2)
