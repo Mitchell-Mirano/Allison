@@ -25,7 +25,7 @@ Now you can use Allison
 - import the requirements
 - import  Kmeans model  and select your features for train.
 
-![Screenshot_81](https://user-images.githubusercontent.com/67351445/115980248-ca9a2b00-a550-11eb-969d-db791eec9754.png)
+![Screenshot_100](https://user-images.githubusercontent.com/67351445/116353342-33d1a680-a7bc-11eb-8a34-5e0381d9ba3b.png)
 
 - create a model object with the Kmeans class and use the train method for trainning.
 - the moviment_limit param is the condition for stop the training when the mean of the movements of the centroids is < movement limit
