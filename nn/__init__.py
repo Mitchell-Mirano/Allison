@@ -1,4 +1,5 @@
-from ._functions import Activation , Loss
 from ._layers import  LayerDense
+from ._models import NeuralNetwork
 
-__all__ =['Activation','Loss','LayerDense']
+__all__ =['LayerDense',
+        'NeuralNetwork']

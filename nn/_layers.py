@@ -4,28 +4,27 @@ class LayerDense():
     self.n_neurons=n_neurons
     self.function_of_activation=function_of_activation
     self.imput_shape=imput_shape
-    self.weigths=np.random.randn(self.n_neurons,self.imput_shape[0]+1)
-
-  def neuron(self, features, weights):
-    linear_covination=weights[0] + np.matmul(weights[1:],features)
-    predict=self.function_of_activation(linear_covination)
-    return predict
-
+    self.bias=np.random.randn(n_neurons,1)
+    self.weights=np.random.randn(self.n_neurons,self.imput_shape[0])
+    self.linear_convination=None
+    self.activation=None
 
   def foward_layer_dense(self,features):
-    predictions=None
-    for i in range(self.n_neurons):
-      predict=self.neuron(features, self.weights[i])
-      if predictions is None:
-        predictions=predict
-      else :
-        predictions=np.append(prediction, predict)
-    
-    return predictions.reshape(self.n_neurons,self.imput_shape[1])
+    if self.imput_shape[0]==1:
+      self.linear_convination=self.bias + self.weights*features
+    else:
+      self.linear_convination=self.bias + self.weights@features
+    self.activation=self.function_of_activation(self.linear_convination)
+    return self.activation
 
-  def gradients_layer_dense(self,gradientes_next_layer):
-    pass
-
-  def bacward_layer_dense(self,learning_ratio, gradientes_next_layer):
-    gradients=self.gradients_layer_dense(gradientes_next_layer)
-    self.weights=self.weights-learning_ratio*gradients
+  def bacward_layer_dense(self, learning_ratio, gradient_next_layer,weights_next_layer=0,activation_previous_layer=0):
+    if type(weights_next_layer)==int and type(activation_previous_layer)==int:
+      this_layer_gradient=np.mean(gradient_next_layer*self.function_of_activation(self.linear_convination, derivative=True))
+      self.bias = self.bias -learning_ratio*this_layer_gradient
+      self.weights=self.weights-learning_ratio*this_layer_gradient*np.mean(activation_previous_layer)
+      return this_layer_gradient
+    else :
+      this_layer_gradient=np.mean(gradient_next_layer*weights_next_layer@self.function_of_activation(self.linear_convination, derivative=True))
+      self.bias = self.bias -learning_ratio*this_layer_gradient
+      self.weights=self.weights-learning_ratio*this_layer_gradient*np.mean(activation_previous_layer)
+      return this_layer_gradient
