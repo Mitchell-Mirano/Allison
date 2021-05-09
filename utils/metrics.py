@@ -1,5 +1,13 @@
 import numpy as np
 
+def label_pred(predictions):
+    labels_pred=[]
+    for prediction in predictions:
+        if prediction < 0.5:
+            labels_pred.append(0)
+        else:
+            labels_pred.append(1)
+    return labels_pred
 
 
 def r2_score(labels, predictions):
@@ -9,9 +17,13 @@ def r2_score(labels, predictions):
 
 
 def accuracy(labels,predictions):
+    global label_pred
+    labels_pred=label_pred(predictions)
+
     correct_predictions=0
-    for label, labels_pred in zip(labels, predictions):
-        if label==labels_pred:
+
+    for label, label_pred in zip(labels, labels_pred):
+        if label==label_pred:
             correct_predictions=correct_predictions +1
 
     return (correct_predictions/len(labels))*100
