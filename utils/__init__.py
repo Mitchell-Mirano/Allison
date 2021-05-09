@@ -1,7 +1,4 @@
-from ._activation import Activation
-from ._loss import Loss
-from ._metrics import Metrics
+from . import functions
+from. import metrics
 
-__all__=['Activation',
-        'Loss',
-        'Metrics']
+__all__=['functions','metrics']
