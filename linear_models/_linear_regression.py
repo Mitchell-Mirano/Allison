@@ -68,7 +68,7 @@ class LinearRegression():
         history_train['loss'].append(loss)
         history_train['r2_score'].append(score)
         history_train['iter'].append(i+1)
-        print('Iter:\t{}\t{}\t r2_score:\t{:.2f}%'.format(i+1,50*'='+'>',score))
+        print('Iter:\t{}\t{}\t r2_score:\t{:.2f}% \n\n'.format(i+1,50*'='+'>',score))
 
     return history_train
 

@@ -1,14 +1,26 @@
 import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
 from utils.metrics import accuracy, recall,precision, r2_score
 from utils.functions.loss import mean_square_error, binary_cross_entropy
 
-def test():
+from linear_models import LogisticRegression
+from linear_models import LinearRegression
 
-    labels=np.array([1,1,1,1,0,0,0])
-    predictions=np.array([0.9,0.8,0.95,0.15,0.20,0.30,0.89])
-
-    acc=accuracy(labels, predictions)
-    return acc
 
 if __name__=='__main__':
-    print(test())
+    x=np.linspace(2,20,100)
+    y=2*x +1 +2 *np.random.randn(100)
+
+    plt.scatter(x,y)
+    plt.show()
+
+    model=LinearRegression()
+    model.optimizers(mean_square_error,0.001,r2_score)
+    model.train(30,x,y)
+
+    plt.scatter(x,y)
+    plt.plot(x,model.predict(x))
+    plt.show()
+
+    

@@ -10,10 +10,10 @@ def mean_square_error(labels, predictions,derivative=False):
 
 def binary_cross_entropy(labels,predictions, derivative=False):
   if derivative==False:
-    bce=-np.sum(labels*np.log(predictions) +
-    return bce (1-labels)*np.log(1-predictions))
+    bce=-np.sum(labels*np.log(predictions) + (1-labels)*np.log(1-predictions))
+    return bce 
   else:
-    dbce=-np.sum((labels-predictions)/(predictions*(1-predictions)))
+    dbce=-np.sum(labels/predictions + (labels-1)/(1-predictions))
     return dbce
 
 def categorical_cross_entropy(labels, predictions):

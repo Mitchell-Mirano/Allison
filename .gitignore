@@ -3,3 +3,4 @@ appengine-generated/
 /env
 __pycache__/
 *.csv
+*.npy
