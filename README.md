@@ -20,22 +20,5 @@ inside and not be a black box for many people.
 
 Now you can use Allison
 
-## Example of Allison in Google Colab
-- Clone the repository
-- import the requirements
-- import  Kmeans model  and select your features for train.
-
-![Screenshot_100](https://user-images.githubusercontent.com/67351445/116353342-33d1a680-a7bc-11eb-8a34-5e0381d9ba3b.png)
-
-- create a model object with the Kmeans class and use the train method for trainning.
-- the moviment_limit param is the condition for stop the training when the mean of the movements of the centroids is < movement limit
-- you can use the centroids and labels atribute for obtain the new centroids and labels
-- you can save the labels with save_labels method
-
-![Screenshot_82](https://user-images.githubusercontent.com/67351445/115980467-94f64180-a552-11eb-8053-43b18ea40823.png)
-
-
-- Graph your features with your new labels and centroids
-![Screenshot_83](https://user-images.githubusercontent.com/67351445/115980461-8740bc00-a552-11eb-9750-f4492db70e7f.png)
-
-
+## Examples in Allison
+- for examples review examples directory
