@@ -6,7 +6,7 @@ class LinearRegression():
 
   def __init__(self, regularization=None):
     self.weights=None
-    self.bias=np.random.rand()
+    self.bias=np.random.rand(1,1)
     self.regularization=None
     self.loss_function=None
     self.metrics=None
@@ -18,22 +18,20 @@ class LinearRegression():
     self.metrics=metrics
     self.regularization=regularization
 
-    
   def init_params(self,features):
     if features.ndim==1:
-      self.weights=np.random.rand(1)
+      self.weights=np.random.rand(1,1)
     else :
-      self.weights=np.random.rand(features.shape[0])
+      self.weights=np.random.rand(1,features.shape[0])
 
 
   def foward(self,features):
-    if len(self.weights)==1:
-      prediction= self.bias + self.weights*features
+    if features.ndim==1:
+      prediction=self.bias + self.weights*features
     else:
-      prediction=self.bias + self.weights@features
-
+     prediction=self.bias + self.weights@features 
+  
     return prediction
-
 
   def  bacward(self,labels,predictions, features):
 
@@ -60,7 +58,7 @@ class LinearRegression():
 
     for i in range(n_iters):
       predictions=self.foward(features)
-      self.bacward(labels, predictions, features)
+      self.bacward(labels, predictions[0], features)
 
       if (i+1)%callbacks_period==0:
         score=self.metrics(labels,predictions)
@@ -75,7 +73,7 @@ class LinearRegression():
 
   def predict (self,features):
     predictions=self.foward(features)
-    return predictions
+    return predictions[0]
   
   def save_weights(self,path):
     with open(path, 'wb') as f:
