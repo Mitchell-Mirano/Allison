@@ -4,3 +4,5 @@ appengine-generated/
 __pycache__/
 *.csv
 *.npy
+
+/test.py

@@ -12,7 +12,7 @@ class LogisticRegression():
 
   def __init__(self):
     self.weights=None
-    self.bias=np.random.rand(1,1)
+    self.bias=np.random.rand(1)
     self.linear_convination=None
     self.regularization=None
     self.loss_function=None
@@ -28,15 +28,26 @@ class LogisticRegression():
     self.regularization=regularization
 
     
-  def init_params(self,features):
-    if features.ndim==1:
-      self.weights=np.random.rand(1,1)
-    else :
-      self.weights=np.random.rand(1,features.shape[0])
+  def init_params(self,features,predict=False):
 
+    if 'pandas' in str(type(features)):
+      features=features.to_numpy()
+
+    if predict==False:
+      if features.ndim==1:
+        self.weights=np.random.rand(1)
+      else :
+        self.weights=np.random.rand(len(features[0]))
+
+    return features
 
   def foward(self,features):
-    self.linear_convination=self.bias + self.weights@features
+
+    if features.ndim==1:
+      self.linear_convination=self.bias + features*self.weights
+    else:
+      self.linear_convination=self.bias + features@self.weights
+
     prediction=self.function_of_activation(self.linear_convination)
     return prediction
 
@@ -45,16 +56,19 @@ class LogisticRegression():
   
 
     gradient=self.loss_function(labels, predictions,True)*self.function_of_activation(self.linear_convination,True)
-    
     gradient=np.mean(gradient)
 
-    gradient_weights=gradient*np.mean(features, axis=1)
+    if features.ndim==1:
+      gradient_weights=gradient*np.mean(features)
+    else:
+      gradient_weights=gradient*np.mean(features, axis=0)
 
     self.bias =self.bias-self.learning_ratio*gradient
     self.weights= self.weights-self.learning_ratio*gradient_weights
 
   def train(self,n_iters,features, labels, callbacks_period=2):
-    self.init_params(features)
+
+    features=self.init_params(features)
 
     history_train={
         'iter':[],
@@ -66,7 +80,7 @@ class LogisticRegression():
       predictions=self.foward(features)
       self.bacward(labels, predictions, features)
       if (i+1)%callbacks_period==0:
-        score=self.metrics(labels,predictions[0])
+        score=self.metrics(labels,predictions)
         loss=self.loss_function(labels, predictions)
         history_train['loss'].append(loss)
         history_train['accuracy'].append(score)
@@ -77,9 +91,10 @@ class LogisticRegression():
 
 
   def predict (self,features):
+    features=self.init_params(features, predict=True)
     predictions=self.foward(features)
     global predict_labels
-    predictions =predict_labels(predictions[0])
+    predictions =predict_labels(predictions)
     return predictions
   
   def save_weights(self,path):

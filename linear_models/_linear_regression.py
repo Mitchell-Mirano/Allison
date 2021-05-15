@@ -6,7 +6,7 @@ class LinearRegression():
 
   def __init__(self, regularization=None):
     self.weights=None
-    self.bias=np.random.rand(1,1)
+    self.bias=np.random.rand(1)
     self.regularization=None
     self.loss_function=None
     self.metrics=None
@@ -18,18 +18,24 @@ class LinearRegression():
     self.metrics=metrics
     self.regularization=regularization
 
-  def init_params(self,features):
-    if features.ndim==1:
-      self.weights=np.random.rand(1,1)
-    else :
-      self.weights=np.random.rand(1,features.shape[0])
+  def init_params(self,features,predict=False):
 
+    if 'pandas' in str(type(features)):
+      features=features.to_numpy()
+    
+    if predict==False:
+      if features.ndim==1:
+        self.weights=np.random.rand(1)
+      else :
+        self.weights=np.random.rand(len(features[0]))
+
+    return features
 
   def foward(self,features):
     if features.ndim==1:
-      prediction=self.bias + self.weights*features
+      prediction=self.bias + features*self.weights
     else:
-     prediction=self.bias + self.weights@features 
+      prediction=self.bias + features@self.weights
   
     return prediction
 
@@ -40,7 +46,7 @@ class LinearRegression():
     if features.ndim==1:
       gradient_weights=gradient*np.mean(features)
     else:
-      gradient_weights=gradient*np.mean(features, axis=1)
+      gradient_weights=gradient*np.mean(features, axis=0)
 
     self.bias =self.bias-self.learning_ratio*gradient
     self.weights= self.weights-self.learning_ratio*gradient_weights
@@ -48,7 +54,8 @@ class LinearRegression():
 
 
   def train(self,n_iters,features, labels, callbacks_period=2):
-    self.init_params(features)
+
+    features=self.init_params(features)
 
     history_train={
         'iter':[],
@@ -58,7 +65,7 @@ class LinearRegression():
 
     for i in range(n_iters):
       predictions=self.foward(features)
-      self.bacward(labels, predictions[0], features)
+      self.bacward(labels, predictions, features)
 
       if (i+1)%callbacks_period==0:
         score=self.metrics(labels,predictions)
@@ -72,8 +79,9 @@ class LinearRegression():
 
 
   def predict (self,features):
+    features=self.init_params(features, predict=True)
     predictions=self.foward(features)
-    return predictions[0]
+    return predictions
   
   def save_weights(self,path):
     with open(path, 'wb') as f:
