@@ -2,11 +2,7 @@
 import numpy as np
 import pandas as pd
 
-from utils.functions.activation import Sigmoid
-
-from utils.functions.loss import binary_cross_entropy
-
-from utils.metrics import predict_labels
+from ..utils.metrics import predict_labels
 
 class LogisticRegression():
 
