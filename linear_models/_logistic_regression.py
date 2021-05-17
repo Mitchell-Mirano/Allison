@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 import numpy as np
-import pandas as pd
 
-from ..utils.metrics import predict_labels
+from utils.metrics import predict_labels
 
 class LogisticRegression():
 

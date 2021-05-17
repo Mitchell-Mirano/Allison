@@ -1,17 +1,46 @@
 import numpy as np
 
+class BaseFunctions:
 
-class LinearRegression():
+    def sin(x):
+        return np.sin(x)
+
+    def cos(x):
+        return np.cos(x)
+
+    def log(x):
+        return np.log(x)
+
+    def linear(x):
+        return x
+
+    def polynomial(x,grade):
+        return x**grade
+
+
+functions={
+    
+    'sinx': BaseFunctions.sin,
+    'cosx': BaseFunctions.cos,
+    'lnx' : BaseFunctions.log,
+    'x'   : BaseFunctions.linear,
+    'polynomial': BaseFunctions.polynomial
+}
+
+
+class FunctionalRegression():
 
   def __init__(self, regularization=None):
     self.weights=None
     self.bias=np.random.rand(1)
+    self.n_grade=None
     self.regularization=None
     self.loss_function=None
-    self.metrics=None
     self.learning_ratio=None
+    self.metrics=None
 
-  def optimizers(self, loss_function,lr,metrics,regularization=None):
+  def optimizers(self, base_functions,loss_function,lr,metrics,regularization=None):
+    self.base_functions=base_functions
     self.loss_function=loss_function
     self.learning_ratio=lr
     self.metrics=metrics
@@ -22,13 +51,27 @@ class LinearRegression():
     if 'pandas' in str(type(features)):
       features=features.to_numpy()
     
+
     if predict==False:
       if features.ndim==1:
-        self.weights=np.random.rand(1)
+        self.weights=np.random.rand(len(self.base_functions))
       else :
         self.weights=np.random.rand(len(features[0]))
+    
+    kernels=None
 
-    return features
+    global functions
+    for i, name in enumerate(self.base_functions):
+      function=functions[name]
+      if i>0:
+        kernels=np.append(kernels,function(features))
+      else :
+        kernels=function(features)
+
+
+    kernels=kernels.reshape(len(self.base_functions),len(features)).T
+
+    return kernels
 
   def foward(self,features):
     if features.ndim==1:

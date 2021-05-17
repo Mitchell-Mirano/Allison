@@ -7,7 +7,6 @@ from utils.metrics import accuracy, predict_labels, recall,precision, r2_score
 from utils.functions.loss import mean_square_error, binary_cross_entropy
 
 from linear_models import LogisticRegression
-from linear_models import LinearRegression
 
 def numeric_labels(categorical_labels):
     
