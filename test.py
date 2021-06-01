@@ -21,19 +21,8 @@ def numeric_labels(categorical_labels):
 
 if __name__=='__main__':
    
-   data=pd.read_csv('./data/iris.csv')
-   data['labels']=numeric_labels(data['variety'])
-   data=data.drop('variety', axis=1)
-   data=data[data['labels']<2]
-   labels=data.pop('labels')
-   features=data.pop('sepal.length')
+   x=np.linspace(-10,10,100)
+   y=np.sin(x)
 
-   model=LogisticRegression()
-   model.optimizers(function_of_activation=Sigmoid,loss_function=binary_cross_entropy,lr=0.001,metrics=accuracy)
-   model.train(n_iters=100,features=features,labels=labels, callbacks_period=10)
-
-   plt.figure(figsize=(12,8))
-   plt.scatter(features, labels, s=80, c=labels)
-   plt.plot(features,model.foward(features), lw=3, c='red')
+   plt.plot(x,y, lw=3)
    plt.show()
-
