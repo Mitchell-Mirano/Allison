@@ -1,17 +1,7 @@
 # -*- coding: utf-8 -*-
-from utils import functions
-from utils.metrics import predict_labels
-import utils
 import numpy as np
-
-def predict_labels(predictions):
-    labels_pred=[]
-    for prediction in predictions:
-        if prediction <= 0.5:
-            labels_pred.append(0)
-        else:
-            labels_pred.append(1)
-    return labels_pred
+import utils
+from utils.metrics import predict_labels
 
 class LogisticRegression():
 
