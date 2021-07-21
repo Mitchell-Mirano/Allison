@@ -3,6 +3,8 @@ from utils.functions.activation import Sigmoid
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+
+
 from utils.metrics import accuracy, predict_labels, recall,precision, r2_score
 from utils.functions.loss import mean_square_error, binary_cross_entropy
 
@@ -20,9 +22,22 @@ def numeric_labels(categorical_labels):
     return sorted(numeric_labels)
 
 if __name__=='__main__':
-   
-   x=np.linspace(-10,10,100)
-   y=np.sin(x)
+    
+    data=pd.read_csv('./data/iris.csv')
+    data=data[data['labels']<2]
+    labels=data.pop('labels')
+    features=data
 
-   plt.plot(x,y, lw=3)
-   plt.show()
+    model=LogisticRegression()
+
+    model.optimizers(function_of_activation=Sigmoid,
+        loss_function=binary_cross_entropy,
+        lr=0.001,
+        metrics=accuracy)
+
+    model.train(n_iters=15,features=features, labels=labels,callbacks_period=1)
+
+    
+    plt.figure(figsize=(12,8))
+    plt.scatter(features['sepal width (cm)'], features['petal width (cm)'],s=80,c=model.predict(features))
+    plt.show()

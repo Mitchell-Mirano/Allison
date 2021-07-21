@@ -7,7 +7,7 @@ class LogisticRegression():
 
   def __init__(self):
     self.weights=None
-    self.bias=np.random.rand(1)
+    self.bias=-np.random.rand(1)
     self.linear_convination=None
     self.regularization=None
     self.loss_function=None
@@ -30,9 +30,9 @@ class LogisticRegression():
 
     if predict==False:
       if features.ndim==1:
-        self.weights=np.random.rand(1)
+        self.weights=-np.random.rand(1)
       else :
-        self.weights=np.random.rand(len(features[0]))
+        self.weights=-np.random.rand(len(features[0]))
 
     return features
 
@@ -64,11 +64,13 @@ class LogisticRegression():
   def train(self,n_iters,features, labels, callbacks_period=2):
 
     features=self.init_params(features)
-
+    
     history_train={
         'iter':[],
         'loss':[],
-        'accuracy':[]
+        'accuracy':[],
+        'bias':[],
+        'weights':[]
     }
 
     for i in range(n_iters):
@@ -80,7 +82,9 @@ class LogisticRegression():
         history_train['loss'].append(loss)
         history_train['accuracy'].append(score)
         history_train['iter'].append(i+1)
-        print('Iter:\t{}\t{}\t accuracy:\t{:.2f}% \n\n'.format(i+1,50*'='+'>',score))
+        history_train['bias'].append(self.bias)
+        history_train['weights'].append(self.weights)
+        print('Iter:\t{}\t{}\t accuracy:\t {:.2f}%  \n\n'.format(i+1,50*'='+'>',score))
 
     return history_train
 
