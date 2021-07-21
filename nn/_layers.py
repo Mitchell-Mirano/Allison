@@ -1,3 +1,5 @@
+import numpy as np
+
 class LayerDense():
 
   def __init__(self,n_neurons,function_of_activation,imput_shape):

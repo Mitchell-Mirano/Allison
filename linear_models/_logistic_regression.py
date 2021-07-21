@@ -1,13 +1,23 @@
 # -*- coding: utf-8 -*-
+from utils import functions
+from utils.metrics import predict_labels
+import utils
 import numpy as np
 
-from utils.metrics import predict_labels
+def predict_labels(predictions):
+    labels_pred=[]
+    for prediction in predictions:
+        if prediction <= 0.5:
+            labels_pred.append(0)
+        else:
+            labels_pred.append(1)
+    return labels_pred
 
 class LogisticRegression():
 
   def __init__(self):
     self.weights=None
-    self.bias=-np.random.rand(1)
+    self.bias=np.random.rand(1)
     self.linear_convination=None
     self.regularization=None
     self.loss_function=None
@@ -30,9 +40,9 @@ class LogisticRegression():
 
     if predict==False:
       if features.ndim==1:
-        self.weights=-np.random.rand(1)
+        self.weights=np.random.rand(1)
       else :
-        self.weights=-np.random.rand(len(features[0]))
+        self.weights=np.random.rand(len(features[0]))
 
     return features
 
@@ -68,9 +78,7 @@ class LogisticRegression():
     history_train={
         'iter':[],
         'loss':[],
-        'accuracy':[],
-        'bias':[],
-        'weights':[]
+        'accuracy':[]
     }
 
     for i in range(n_iters):
@@ -82,8 +90,6 @@ class LogisticRegression():
         history_train['loss'].append(loss)
         history_train['accuracy'].append(score)
         history_train['iter'].append(i+1)
-        history_train['bias'].append(self.bias)
-        history_train['weights'].append(self.weights)
         print('Iter:\t{}\t{}\t accuracy:\t {:.2f}%  \n\n'.format(i+1,50*'='+'>',score))
 
     return history_train
