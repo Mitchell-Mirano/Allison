@@ -1,12 +1,12 @@
 
-from utils.functions.activation import Sigmoid
+from .utils.functions.activation import Sigmoid
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
 
-from utils.metrics import accuracy, predict_labels, recall,precision, r2_score
-from utils.functions.loss import mean_square_error, binary_cross_entropy
+from .utils.metrics import accuracy, predict_labels, recall,precision, r2_score
+from .utils.functions.loss import mean_square_error, binary_cross_entropy
 
 from linear_models import LogisticRegression
 
