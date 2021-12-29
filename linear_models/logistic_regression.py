@@ -1,27 +1,32 @@
+# -*- coding: utf-8 -*-
 import numpy as np
+from utils.metrics import predict_labels
 
+class LogisticRegression():
 
-class LinearRegression():
-
-  def __init__(self, regularization=None):
+  def __init__(self):
     self.weights=None
     self.bias=np.random.rand(1)
+    self.linear_convination=None
     self.regularization=None
     self.loss_function=None
-    self.metrics=None
     self.learning_ratio=None
+    self.metrics=None
+    self.function_of_activation=None
 
-  def optimizers(self, loss_function,lr,metrics,regularization=None):
+  def optimizers(self,function_of_activation,loss_function,lr,metrics,regularization=None):
+    self.function_of_activation=function_of_activation
     self.loss_function=loss_function
     self.learning_ratio=lr
     self.metrics=metrics
     self.regularization=regularization
 
+    
   def init_params(self,features,predict=False):
 
     if 'pandas' in str(type(features)):
       features=features.to_numpy()
-    
+
     if predict==False:
       if features.ndim==1:
         self.weights=np.random.rand(1)
@@ -31,16 +36,21 @@ class LinearRegression():
     return features
 
   def foward(self,features):
+
     if features.ndim==1:
-      prediction=self.bias + features*self.weights
+      self.linear_convination=self.bias + features*self.weights
     else:
-      prediction=self.bias + features@self.weights
-  
+      self.linear_convination=self.bias + features@self.weights
+
+    prediction=self.function_of_activation(self.linear_convination)
     return prediction
 
-  def  bacward(self,labels,predictions, features):
 
-    gradient=self.loss_function(labels, predictions,derivative=True)
+  def  bacward(self,labels,predictions, features):
+  
+
+    gradient=self.loss_function(labels, predictions,True)*self.function_of_activation(self.linear_convination,True)
+    gradient=np.mean(gradient)
 
     if features.ndim==1:
       gradient_weights=gradient*np.mean(features)
@@ -50,29 +60,26 @@ class LinearRegression():
     self.bias =self.bias-self.learning_ratio*gradient
     self.weights= self.weights-self.learning_ratio*gradient_weights
 
-
-
   def train(self,n_iters,features, labels, callbacks_period=2):
 
     features=self.init_params(features)
-
+    
     history_train={
         'iter':[],
         'loss':[],
-        'r2_score':[]
+        'accuracy':[]
     }
 
     for i in range(n_iters):
       predictions=self.foward(features)
       self.bacward(labels, predictions, features)
-
       if (i+1)%callbacks_period==0:
         score=self.metrics(labels,predictions)
         loss=self.loss_function(labels, predictions)
         history_train['loss'].append(loss)
-        history_train['r2_score'].append(score)
+        history_train['accuracy'].append(score)
         history_train['iter'].append(i+1)
-        print('Iter:\t{}\t{}\t r2_score:\t{:.2f}% \n\n'.format(i+1,50*'='+'>',score))
+        print('Iter:\t{}\t{}\t accuracy:\t {:.2f}%  \n\n'.format(i+1,50*'='+'>',score))
 
     return history_train
 
@@ -80,6 +87,8 @@ class LinearRegression():
   def predict (self,features):
     features=self.init_params(features, predict=True)
     predictions=self.foward(features)
+    global predict_labels
+    predictions =predict_labels(predictions)
     return predictions
   
   def save_weights(self,path):
@@ -94,3 +103,6 @@ class LinearRegression():
       weights = np.load(f)
     self.bias= bias
     self.weights=weights
+        
+        
+    
