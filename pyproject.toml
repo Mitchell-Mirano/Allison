@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "allison"
+version = "0.1.0"
+description = "A Machine Learning library for begainers"
+authors = ["Mitchell Mirano <mitchellmirano25@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+numpy = "^1.24.2"
+
+
+[tool.poetry.group.dev.dependencies]
+pandas = "^1.5.3"
+matplotlib = "^3.7.0"
+notebook = "^6.5.2"
+jupyterlab = "^3.6.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

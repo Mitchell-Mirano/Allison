@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import numpy as np
-from utils.metrics import predict_labels
+from allison.utils.metrics import predict_labels
 
 class LogisticRegression():
 
