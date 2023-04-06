@@ -1,7 +1,7 @@
 # **Allison**
 
 Allison: is a library  of Artificial Intelligence for
-beagainers.
+beginners.
 
 ## **About Allison**
 
