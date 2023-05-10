@@ -1,108 +1,48 @@
 # -*- coding: utf-8 -*-
+from typing import Callable
 import numpy as np
 from allison.utils.metrics import predict_labels
+from allison.linear_models.linear_model import LinearModel
+from allison.utils.functions.activation import Sigmoid
 
-class LogisticRegression():
+class LogisticRegression(LinearModel):
 
-  def __init__(self):
-    self.weights=None
-    self.bias=np.random.rand(1)
-    self.linear_convination=None
-    self.regularization=None
-    self.loss_function=None
-    self.learning_ratio=None
-    self.metrics=None
-    self.function_of_activation=None
-
-  def optimizers(self,function_of_activation,loss_function,lr,metrics,regularization=None):
-    self.function_of_activation=function_of_activation
-    self.loss_function=loss_function
-    self.learning_ratio=lr
-    self.metrics=metrics
-    self.regularization=regularization
-
-    
-  def init_params(self,features,predict=False):
-
-    if 'pandas' in str(type(features)):
-      features=features.to_numpy()
-
-    if predict==False:
-      if features.ndim==1:
-        self.weights=np.random.rand(1)
-      else :
-        self.weights=np.random.rand(len(features[0]))
-
-    return features
-
-  def foward(self,features):
-
-    if features.ndim==1:
-      self.linear_convination=self.bias + features*self.weights
-    else:
-      self.linear_convination=self.bias + features@self.weights
-
-    prediction=self.function_of_activation(self.linear_convination)
-    return prediction
+    def __init__(self):
+        super().__init__()
+        self.linear_convination:np.array = None
+        self.function_of_activation:Callable = Sigmoid
 
 
-  def  bacward(self,labels,predictions, features):
-  
+    def foward(self, features):
 
-    gradient=self.loss_function(labels, predictions,True)*self.function_of_activation(self.linear_convination,True)
-    gradient=np.mean(gradient)
+        if features.ndim == 1:
+            self.linear_convination = self.bias + features*self.weights
+        else:
+            self.linear_convination = self.bias + features@self.weights
 
-    if features.ndim==1:
-      gradient_weights=gradient*np.mean(features)
-    else:
-      gradient_weights=gradient*np.mean(features, axis=0)
+        prediction = self.function_of_activation(self.linear_convination)
+        return prediction
 
-    self.bias =self.bias-self.learning_ratio*gradient
-    self.weights= self.weights-self.learning_ratio*gradient_weights
+    def bacward(self, labels, predictions, features):
 
-  def train(self,n_iters,features, labels, callbacks_period=2):
+        gradient = self.loss_function(labels, predictions, True)\
+                   *self.function_of_activation(self.linear_convination, True)
+        gradient = np.mean(gradient)
 
-    features=self.init_params(features)
-    
-    history_train={
-        'iter':[],
-        'loss':[],
-        'accuracy':[]
-    }
+        if features.ndim == 1:
+            gradient_weights = gradient*np.mean(features)
+        else:
+            gradient_weights = gradient*np.mean(features, axis=0)
 
-    for i in range(n_iters):
-      predictions=self.foward(features)
-      self.bacward(labels, predictions, features)
-      if (i+1)%callbacks_period==0:
-        score=self.metrics(labels,predictions)
-        loss=self.loss_function(labels, predictions)
-        history_train['loss'].append(loss)
-        history_train['accuracy'].append(score)
-        history_train['iter'].append(i+1)
-        print('Iter:\t{}\t{}\t accuracy:\t {:.2f}%  \n\n'.format(i+1,50*'='+'>',score))
+        self.bias = self.bias-self.learning_rate*gradient
+        self.weights = self.weights-self.learning_rate*gradient_weights
 
-    return history_train
+    def predict(self, features: np.array) -> np.array:
+        return predict_labels(super().predict(features))
 
-
-  def predict (self,features):
-    features=self.init_params(features, predict=True)
-    predictions=self.foward(features)
-    global predict_labels
-    predictions =predict_labels(predictions)
-    return predictions
-  
-  def save_weights(self,path):
-    with open(path, 'wb') as f:
-      np.save(f,self.bias)
-      np.save(f,self.weights)
-
-  
-  def load_weights(self,path):
-    with open(path, 'rb') as f:
-      bias = np.load(f)
-      weights = np.load(f)
-    self.bias= bias
-    self.weights=weights
-        
-        
-    
+    def __str__(self)->str:
+        text = \
+            f"model: Logistic Regression \n" +\
+            f"model_bias: {self.bias} \n" +\
+            f"model_weights: {self.weights} \n"
+        return text
