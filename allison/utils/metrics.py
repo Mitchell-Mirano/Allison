@@ -1,25 +1,16 @@
 import numpy as np
 
 def predict_labels(predictions):
-    labels_pred=[]
-    for prediction in predictions:
-        if prediction <= 0.5:
-            labels_pred.append(0)
-        else:
-            labels_pred.append(1)
-    return labels_pred
-
+    return np.where(predictions<=0.5,0,1)
 
 def r2_score(labels, predictions):
     errors=np.sum((labels-predictions)**2)
     varianza=labels.var()*len(labels)
     return (1-(errors/varianza))*100
 
-
 def accuracy(labels,predictions):
-    global predict_labels
     labels_pred=predict_labels(predictions)
-
+    
     correct_predictions=0
 
     for label, label_pred in zip(labels, labels_pred):

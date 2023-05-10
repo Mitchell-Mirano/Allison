@@ -47,7 +47,7 @@ class LinearModel:
             self.history_train = {
                 'iter': [],
                 'loss': [],
-                'r2_score': []
+                'precision': []
             }
 
         if callbacks_period == 1:
@@ -65,9 +65,9 @@ class LinearModel:
                 if history_train:
                     self.history_train['iter'].append(i+1)
                     self.history_train['loss'].append(loss)
-                    self.history_train['r2_score'].append(score)
+                    self.history_train['precision'].append(score)
                 print(
-                    f"Iter:\t{i+1}\t{50*'='+'>'}\t r2_score:\t{score:.3f}% \n")
+                    f"Iter:\t{i+1}\t{50*'='+'>'}\t precision: {score:.3f}% \n")
 
     def predict(self, features: np.array) -> np.array:
         predictions = self.foward(features)
