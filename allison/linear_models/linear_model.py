@@ -66,8 +66,7 @@ class LinearModel:
                     self.history_train['iter'].append(i+1)
                     self.history_train['loss'].append(loss)
                     self.history_train['precision'].append(score)
-                print(
-                    f"Iter:\t{i+1}\t{50*'='+'>'}\t precision: {score:.3f}% \n")
+                print(f"Iter:\t{i+1}\t{50*'='+'>'}\t precision: {score:.3f}% \n")
 
     def predict(self, features: np.array) -> np.array:
         predictions = self.foward(features)
