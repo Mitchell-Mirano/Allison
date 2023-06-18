@@ -1,77 +1,74 @@
-class NeuralNetwork ():
-  def __init__(self):
-    self.layers=[]
-    self.n_layers=0
-    self.learning_ratio=None
-    self.loss_function=None
-    self.metric=None
+import numpy as np
+from allison.nn.layers import LayerDense
 
-  def add_layer(self,layer):
-    self.n_layers=self.n_layers +1
-    self.layers.append(layer)
+class NeuralNetwork:
 
-  def optimizers(self,learning_ratio,loss_function,metric):
-    self.learning_ratio=learning_ratio
-    self.loss_function=loss_function
-    self.metric=metric
+    def __init__(self,loss_function,metric,learning_rate):
+        self.layers: dict[int,LayerDense]={}
+        self.n_layers = 0
+        self.loss_function = loss_function
+        self.learning_rate = learning_rate
+        self.metric = metric
 
+    def add_layer(self,layer):
+        self.n_layers += 1
+        self.layers[self.n_layers] = layer 
 
-  def foward(self, features):
-    for layer in self.layers:
-      features=layer.foward_layer_dense(features)
-    return features
+    def foward(self,features):
+        for key in self.layers.keys():
+            features = self.layers[key].foward(features)
+        return features
 
-  def bacward(self,predictions, labels, features):
+    def bacward(self,activation,labels,features):
 
-    index_layers=len(self.layers)-1
-    for i, layer in enumerate(reversed(self.layers)):
-      if i==0:
-        gradient_final_layer=self.loss_function(predictions,labels, derivative=True)
-        activation_previous_layer=self.layers[index_layers-1-i].activation
-        gradient_next_layer=layer.bacward_layer_dense(self.learning_ratio,gradient_final_layer)
-      else:
-        weigths_next_layer=self.layers[index_layers+1-i].weights
-        if i==index_layers:
-          activation_previous_layer=features
-        activation_previous_layer=self.layers[index_layers-i-1].activation
-        gradient_next_layer=layer.bacward_layer_dense(self.learning_ratio,gradient_next_layer,weigths_next_layer,activation_previous_layer)
+        if self.loss_function.__name__ == "categorical_cross_entropy":
+            DcDz = activation - labels
+        if self.loss_function.__name__ == "binary_cross_entropy":
+            DcDz = self.loss_function(labels,activation,True)
+            
+        for i,layer in reversed(self.layers.items()):
+            if i == self.n_layers:
+                Activation_l_1 = self.layers[i-1].activation
+                DcDz = layer.backward_final_layer(self.learning_rate,DcDz,Activation_l_1)
+            else:
+                Weights_l = self.layers[i+1].weights
+                if i == 1:
+                    Activation_l_1 = features
+                    layer.backward_first_layer(self.learning_rate,DcDz,Activation_l_1,Weights_l)
+                else:
+                    Activation_l_1 = self.layers[i-1].activation
+                    DcDz = layer.backward(self.learning_rate,DcDz,Activation_l_1,Weights_l)
+                    
+    def train(self,features, labels,iters,verbose=True)->None:
+        steps = int(iters/10)
+        for i  in range(1,iters+1):
+            activation = self.foward(features)
+            self.bacward(activation,labels,features)
+            if  i%steps == 0 and verbose:
+                error=self.loss_function(labels,activation)
+                accuracy=self.metric(activation,labels)
+                print(f"Iter:{i:.2f} \t Error:{error:.6f} \t Accuracy:{accuracy:.6f}%")
+    
+    def predict(self,features)->np.array:
+        predictions=self.foward(features)
+        condition=predictions==np.max(predictions, axis = 1,keepdims=True)
+        labels = condition.astype(int)
+        return labels
+    
 
+    def evaluate(self,features,labels)->float:
+        predictions = self.foward(features)
+        return self.metric(predictions,labels)
+    
 
-
-
-  def train(self,n_iters,features, labels, explicit=True):
-
-    history_train={
-        'loss':[]
-    }
-      
-    for i in range(n_iters):
-      labels_pred=self.foward(features)
-      loss=self.loss_function(labels,labels_pred)
-      self.bacward(labels_pred, labels, features)
-      history_train['loss'].append(loss)
-      if explicit==True and i%100==0:
-        loss=self.loss_function(labels,labels_pred)
-        history_train['loss'].append(loss)
-        r2_score=self.metric(labels,labels_pred)
-        print('Iter {}: \t {} \t Loss: {:.2f} \t r2_score: {:.2f}%'.format(i,50*'='+'>',loss,r2_score))
-    return history_train
-
-
-  def summary(self):
-    total_params=0
-    print(50*'=')
-    print('layer \t neurons \t weights')
-    layers_count=0
-    neurons_count=0
-    for layer in self.layers:
-      layers_count=layers_count +1
-      neurons, weights, =layer.weights.shape[0],layer.weights.shape[1]
-      neurons_count=neurons_count + neurons
-      total_weights=neurons*weights + neurons
-      total_params=total_params + total_weights
-      print('  {}\t   {}\t           {}'.format(layers_count,layer.n_neurons,total_weights))
-    print('Total Layers: \t',layers_count)
-    print('Total Neurons:\t',neurons_count)
-    print('Total Weights: \t',total_params)
-    print(50*'=')
+    def summary(self)->None:
+        total_layers = len(self.layers.keys())
+        for i,layer in enumerate(self.layers.values()):
+            layer.summary(i+1)
+        total_neurons = np.sum([layer.n_neurones for layer in self.layers.values()])
+        total_weights = np.sum([layer.n_features*layer.n_neurones for layer in self.layers.values()])
+        print(f"Total -> Layers:{total_layers}, neurons:{total_neurons}, weights:{total_weights}, bias:{total_neurons} params:{total_neurons+total_weights} \n")
+        print(f"Loss function: {self.loss_function.__name__} \n")
+        print(f"Metric: {self.metric.__name__} \n")
+        print(f"Learning Rate: {self.learning_rate} \n")
+    

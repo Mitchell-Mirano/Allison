@@ -1,18 +1,22 @@
 import numpy as np
 
-def Sigmoid(feature,derivative=False):
-  if derivative==False:
-    return 1/(1+np.exp(-feature))
-  else :
-    return np.exp(-feature)/((1+ np.exp(-feature)))**2
+def sigmoid(sumatory,derivative=False):
+    if derivative==False:
+        return 1/(1+np.exp(-sumatory))
+    else :
+        return np.exp(-sumatory)/((1+ np.exp(-sumatory)))**2
 
-def ReLu(feature,derivative=False):
+def softmax(predictions:np.array):
+    predictions = np.exp(predictions)
+    return predictions/np.sum(predictions,axis=1,keepdims=True)
+
+def relu(feature,derivative=False):
   if derivative==False:
     return feature*(feature>0)
   else :
     return 1*(feature>0)
 
-def Tanh(feature,derivative=False):
+def tanh(feature,derivative=False):
   if derivative==False:
     return np.tanh(feature)
   else :

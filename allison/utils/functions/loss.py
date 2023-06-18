@@ -16,6 +16,7 @@ def binary_cross_entropy(labels,predictions, derivative=False):
     dbce=-np.sum(labels/predictions + (labels-1)/(1-predictions))
     return dbce
 
-def categorical_cross_entropy(labels, predictions):
-  pass
+def categorical_cross_entropy(labels:np.array,predictions:np.array):
+    errors = -1*labels*np.log(predictions)
+    return errors.sum()
 

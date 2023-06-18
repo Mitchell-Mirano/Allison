@@ -8,16 +8,30 @@ def r2_score(labels, predictions):
     varianza=labels.var()*len(labels)
     return (1-(errors/varianza))*100
 
-def accuracy(labels,predictions):
-    labels_pred=predict_labels(predictions)
+# def accuracy(labels,predictions):
+#     labels_pred=predict_labels(predictions)
     
-    correct_predictions=0
+#     correct_predictions=0
 
-    for label, label_pred in zip(labels, labels_pred):
-        if label==label_pred:
-            correct_predictions=correct_predictions +1
+#     for label, label_pred in zip(labels, labels_pred):
+#         if label==label_pred:
+#             correct_predictions=correct_predictions +1
 
-    return (correct_predictions/len(labels))*100
+#     return (correct_predictions/len(labels))*100
+
+def accuracy(preds,labels):
+
+    preds= preds
+    labels= labels
+    correct = 0 
+
+    for pred,lab in zip(preds,labels):
+        pred_max_index = np.where(pred==np.max(pred))[0][0]
+        lab_max_index = np.where(lab==np.max(lab))[0][0]
+        if pred_max_index == lab_max_index:
+            correct+=1
+
+    return (correct/len(preds))*100
 
 
 def recall(labels, predictions):
