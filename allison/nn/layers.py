@@ -53,3 +53,9 @@ class LayerDense:
         weights = f"({self.n_features},{self.n_neurones})"
         activation_name = self.activation_function.__name__
         print(f"Layer:{layer_index}, neurons:{self.n_neurones}, input:(n,{self.n_features}), weights:{weights}, output:(n,{self.n_neurones}), activation:{activation_name} \n")
+
+    def __str__(self) -> str:
+        return f"LayerDense(neurones={self.n_neurones},activation={self.activation_function.__name__})"
+    
+    def __repr__(self) -> str:
+        return self.__str__()

@@ -71,4 +71,13 @@ class NeuralNetwork:
         print(f"Loss function: {self.loss_function.__name__} \n")
         print(f"Metric: {self.metric.__name__} \n")
         print(f"Learning Rate: {self.learning_rate} \n")
+
+    def __str__(self) -> str:
+        layers = self.n_layers
+        loss = self.loss_function.__name__
+        metric = self.metric.__name__
+        lr = self.learning_rate
+        return f"NeuralNetwork(layers:{layers},loss:{loss},metric:{metric},lr:{lr})"
     
+    def __repr__(self) -> str:
+        return self.__str__()
