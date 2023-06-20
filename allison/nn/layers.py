@@ -17,11 +17,17 @@ class LayerDense:
         return self.activation
 
 
-    def backward_final_layer(self,lr,Delta_l,activation):
+    def backward_final_layer(self,lr,Delta_l,activation,activation_name):
 
+        if activation_name == "binary_cross_entropy":
+            Delta_l = Delta_l*self.activation_function(self.z,True)
+            
+        if activation_name == "categorical_cross_entropy":
+            pass
+        
         DcDw=activation.T@Delta_l
         DcDb=Delta_l.sum(axis=0)
-        
+    
         self.weights = self.weights - lr*DcDw
         self.bias = self.bias - lr*DcDb
 

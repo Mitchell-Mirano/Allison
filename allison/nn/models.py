@@ -21,15 +21,20 @@ class NeuralNetwork:
 
     def bacward(self,activation,labels,features):
 
-        if self.loss_function.__name__ == "categorical_cross_entropy":
-            DcDz = activation - labels
-        if self.loss_function.__name__ == "binary_cross_entropy":
-            DcDz = self.loss_function(labels,activation,True)
+        loss_function_name = self.loss_function.__name__
+
+        DcDz = None
+
+        if loss_function_name == "categorical_cross_entropy":
+            DcDa = activation - labels
+            
+        if loss_function_name == "binary_cross_entropy":
+            DcDa = self.loss_function(labels,activation,True)
             
         for i,layer in reversed(self.layers.items()):
             if i == self.n_layers:
                 Activation_l_1 = self.layers[i-1].activation
-                DcDz = layer.backward_final_layer(self.learning_rate,DcDz,Activation_l_1)
+                DcDz = layer.backward_final_layer(self.learning_rate,DcDa,Activation_l_1,loss_function_name)
             else:
                 Weights_l = self.layers[i+1].weights
                 if i == 1:
