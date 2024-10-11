@@ -14,8 +14,8 @@ if __name__=='__main__':
     model=LinearRegression()
 
     model.optimizers(loss_function=mean_square_error,
-                    lr=0.001, 
-                    metrics=r2_score)
+                    learning_rate=0.001, 
+                    metric=r2_score)
     
     hist_train=model.train(n_iters=10,
             features=x, 
