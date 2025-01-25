@@ -2,9 +2,9 @@ import numpy as np
 
 class LayerDense:
     
-    def __init__(self,n_neurones:int,n_features:int,activation_function:str):
-        self.n_neurones = n_neurones
+    def __init__(self,n_features:int,n_neurones:int,activation_function:str):
         self.n_features = n_features
+        self.n_neurones = n_neurones
         self.weights=np.random.randn(self.n_features,self.n_neurones)**2
         self.bias=np.random.randn(1,self.n_neurones)**2
         self.z:np.array = None

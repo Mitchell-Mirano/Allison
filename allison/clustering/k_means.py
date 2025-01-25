@@ -6,6 +6,14 @@ from typing import Union
 
 class Kmeans:
 
+    """K-means algorithm
+
+    Parameters
+    ----------
+    n_centroids : int
+        Number of centroids.
+    """
+
     def __init__(self, n_centroids:int):
         self.n_centroids = n_centroids
         self.centroids = None
@@ -57,7 +65,22 @@ class Kmeans:
               features:Union[pd.DataFrame, np.ndarray], 
               moviment_limit:float=0.0001,
               max_iters:int=300,
-              history_train:bool=True) -> None:
+              history_train:bool=False) -> None:
+        
+        """
+        Train the k-means algorithm
+        
+        Parameters
+        ----------
+        features : Union[pd.DataFrame, np.ndarray]
+            Features to train.
+        moviment_limit : float, optional
+            Limit of moviment. The default is 0.0001.
+        max_iters : int, optional
+            Maximum iterations. The default is 300.
+        history_train : bool, optional
+            Save history of train. The default is False.
+        """
         
         features_train = self._data_preprocessing_train(features, history_train)
         iters = 0
@@ -78,6 +101,20 @@ class Kmeans:
 
     def predict(self, features:Union[pd.DataFrame, np.ndarray]) -> np.ndarray:
 
+        """
+        Predict the labels of features
+
+        Parameters
+        ----------
+        features : Union[pd.DataFrame, np.ndarray]
+            Features to predict.
+
+        Returns
+        -------
+        np.ndarray
+            Predicted labels.
+        """
+
         features = features.to_numpy() if isinstance(features, pd.DataFrame) else features
 
         distances = self._distances(features, self.centroids)
@@ -86,12 +123,39 @@ class Kmeans:
     
     def get_distances(self, features:Union[pd.DataFrame, np.ndarray]) -> np.ndarray:
 
+        """
+        Get distances between features and centroids
+
+        Parameters
+        ----------
+        features : Union[pd.DataFrame, np.ndarray]
+            Features to predict.
+
+        Returns
+        -------
+        np.ndarray
+            Distances between features and centroids.
+        """
+
         features = features.to_numpy() if isinstance(features, pd.DataFrame) else features
 
         return self._distances(features, self.centroids)
-    
 
     def get_inertia(self, features:Union[pd.DataFrame, np.ndarray]) -> float:
+
+        """
+        Get inertia of features for k-centroids
+
+        Parameters
+        ----------
+        features : Union[pd.DataFrame, np.ndarray]
+            Features to predict.
+
+        Returns
+        -------
+        float
+            Inertia of features.
+        """
 
         features = features.to_numpy() if isinstance(features, pd.DataFrame) else features
         distances = self._distances(features, self.centroids)
