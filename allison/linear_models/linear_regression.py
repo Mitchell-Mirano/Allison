@@ -8,7 +8,7 @@ class LinearRegression(LinearModel):
     def __init__(self):
         super().__init__()
 
-    def foward(self, features: np.array):
+    def _foward(self, features: np.array):
         if features.ndim == 1:
             prediction = self.bias + features*self.weights
         else:
@@ -16,7 +16,7 @@ class LinearRegression(LinearModel):
 
         return prediction
 
-    def bacward(self, labels: np.array, predictions: np.array, features: np.array):
+    def _bacward(self, labels: np.array, predictions: np.array, features: np.array):
 
         gradient = self.loss_function(labels, predictions, derivative=True)
 
@@ -27,11 +27,3 @@ class LinearRegression(LinearModel):
 
         self.bias = self.bias-self.learning_rate*gradient
         self.weights = self.weights-self.learning_rate*gradient_weights
-
-
-    def __str__(self) -> str:
-        text = \
-            f"model: Linear Regression \n" +\
-            f"model_bias: {self.bias} \n" +\
-            f"model_weights: {self.weights} \n"
-        return text

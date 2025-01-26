@@ -13,7 +13,7 @@ class LogisticRegression(LinearModel):
         self.function_of_activation:Callable = Sigmoid
 
 
-    def foward(self, features):
+    def _foward(self, features):
 
         if features.ndim == 1:
             self.linear_convination = self.bias + features*self.weights
@@ -23,7 +23,7 @@ class LogisticRegression(LinearModel):
         prediction = self.function_of_activation(self.linear_convination)
         return prediction
 
-    def bacward(self, labels, predictions, features):
+    def _bacward(self, labels, predictions, features):
 
         gradient = self.loss_function(labels, predictions, True)\
                    *self.function_of_activation(self.linear_convination, True)
@@ -38,11 +38,5 @@ class LogisticRegression(LinearModel):
         self.weights = self.weights-self.learning_rate*gradient_weights
 
     def predict(self, features: np.array) -> np.array:
-        return predict_labels(super().predict(features))
+        return np.where(self.predict(features)<=0.5,0,1)
 
-    def __str__(self)->str:
-        text = \
-            f"model: Logistic Regression \n" +\
-            f"model_bias: {self.bias} \n" +\
-            f"model_weights: {self.weights} \n"
-        return text
