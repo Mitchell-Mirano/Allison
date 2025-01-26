@@ -56,6 +56,8 @@ class LinearModel:
         else:
             self.weights = np.random.rand(len(features[0]))
 
+        return features, labels
+
     def _foward(self, features: np.array):
         pass
 
@@ -80,8 +82,8 @@ class LinearModel:
             callbacks_period (int, optional): period of callbacks. The default is 1.
             history_train (bool, optional): save history of train. The default is False.
         """
-
-        self._init_params(features,labels)
+        
+        features, labels = self._init_params(features,labels)
         
         if callbacks_period == 1:
             callbacks_period = np.max([1, int(n_iters/10)])
@@ -105,6 +107,7 @@ class LinearModel:
 
 
             if history_train and (i+1) % callbacks_period == 0:
+                print(labels,predictions)
                 score = self.metric(labels, predictions)
                 loss = self.loss_function(labels, predictions)
                 self.history_train['iter'].append(i+1)
@@ -115,7 +118,7 @@ class LinearModel:
                     'weights': self.weights
                 })
 
-                print(f"Iter:\t{i+1}\t{50*'='+'>'}\t {self.metric.__name__}: {score:.3f}% \n")
+                print(f"Iter:\t{i+1}\t{50*'='+'>'}\t {self.loss_function.__name__}: {loss:.3f}% \n")
 
     def predict(self, features: Union[np.array, pd.DataFrame]) -> np.array:
 
@@ -134,8 +137,8 @@ class LinearModel:
         return predictions
 
     def evaluate(self,
-                features_test: Union[np.array, pd.DataFrame],
-                labels_test:Union[np.array, pd.Series]) -> float:
+                 features_test: Union[np.array, pd.DataFrame],
+                 labels_test:Union[np.array, pd.Series]) -> float:
         
         """
         Method to evaluate the model
@@ -151,7 +154,6 @@ class LinearModel:
         labels_test = labels_test.to_numpy() if isinstance(labels_test, pd.Series) else labels_test
         features_test = features_test.to_numpy() if isinstance(features_test, pd.DataFrame) else features_test
 
-        print(f"Metric: {self.metric.__name__} \n")
         return self.metric(labels_test, self.predict(features_test))
     
 
