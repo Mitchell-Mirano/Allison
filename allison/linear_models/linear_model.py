@@ -21,6 +21,7 @@ class LinearModel:
     def __init__(self):
         self.bias: float = None
         self.weights: np.array = None
+        self.features_names:list = None
         self.loss_function: Callable[[np.array, np.array], np.array] = None
         self.metric: Callable[[np.array, np.array], np.array] = None
         self.learning_rate: float = None
@@ -45,6 +46,9 @@ class LinearModel:
         self.learning_rate = learning_rate
 
     def _init_params(self, features: Union[np.array, pd.DataFrame], labels: Union[np.array, pd.Series]):
+
+        if isinstance(features, pd.DataFrame):
+            self.features_names = features.columns.to_list()
 
         features = features.to_numpy() if isinstance(features, pd.DataFrame) else features
         labels = labels.to_numpy() if isinstance(labels, pd.Series) else labels
@@ -160,8 +164,9 @@ class LinearModel:
     def __str__(self) -> str:
         text = f"""
         model: {self.__class__.__name__} \n
-        model_bias: {self.bias} \n
-        model_weights: {self.weights} \n
+        bias: {self.bias} \n
+        weights: {self.weights} \n
+        features_names: {self.features_names} \n
         """
         return text
     

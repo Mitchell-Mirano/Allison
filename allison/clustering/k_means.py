@@ -17,6 +17,7 @@ class Kmeans:
     def __init__(self, n_centroids:int):
         self.n_centroids = n_centroids
         self.centroids = None
+        self.features_names = None
         self.history_train = {}
         self.labels = None
 
@@ -24,6 +25,9 @@ class Kmeans:
                                  features:Union[pd.DataFrame, np.ndarray], 
                                  history_train:bool) -> np.ndarray:
         
+        if isinstance(features, pd.DataFrame):
+            self.features_names = features.columns.to_list()
+            
         features_train = features.to_numpy() if isinstance(features, pd.DataFrame) else features
 
         self.centroids = features_train[np.random.randint(0, len(features_train), self.n_centroids)]
@@ -167,4 +171,16 @@ class Kmeans:
             vectors = features[filter]
             inertia += np.sum((vectors - self.centroids[label])**2)
         return inertia
+    
+
+    def __str__(self):
+        
+        text = f"""
+        model: {self.__class__.__name__} \n
+        n_centroids: {self.n_centroids} \n
+        """
+        return text
+    
+    def __repr__(self):
+        return self.__str__()
 
