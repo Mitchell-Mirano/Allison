@@ -1,104 +1,87 @@
 import numpy as np
+from allison.linear_models.linear_model import LinearModel
+from typing import Callable
+import pandas as pd
+from typing import Union
+import numpy as np
 
-class PolinomicRegression():
 
-  def __init__(self, regularization=None):
-    self.weights=None
-    self.bias=np.random.rand(1)
-    self.n_grade=None
-    self.regularization=None
-    self.loss_function=None
-    self.learning_ratio=None
-    self.metrics=None
 
-  def optimizers(self, n_grade,loss_function,lr,metrics,regularization=None):
-    self.n_grade=n_grade
-    self.loss_function=loss_function
-    self.learning_ratio=lr
-    self.metrics=metrics
-    self.regularization=regularization
+class PolinomicRegression(LinearModel):
+    """
+    Polinomic Regression
+    """
 
-  def init_params(self,features,predict=False):
+    def __init__(self,
+                 loss_function: Callable[[np.ndarray, np.ndarray], np.ndarray],
+                 metric: Callable[[np.ndarray, np.ndarray], np.ndarray],
+                 lr: float,
+                 n_grade: int):
+        """
 
-    if 'pandas' in str(type(features)):
-      features=features.to_numpy()
+        Args:
+            loss_function (Callable[[np.ndarray, np.ndarray], np.ndarray]): loss function
+            metric (Callable[[np.ndarray, np.ndarray], np.ndarray]): metric
+            lr (float): learning ratio
+            n_grade (int): grade of the polynomial
+        """
+        super().__init__(loss_function, metric, lr)
+        self.n_grade = n_grade
+        
+
+    def calculate_kernels(self,features:np.ndarray):
+
+        kernels = features
+
+        for i in range(2, self.n_grade + 1):
+            kernels = np.column_stack((kernels, np.power(features, i)))
+               
+        return kernels
+
+    def _init_params(self,
+                     features: Union[np.ndarray, pd.DataFrame],
+                     labels: Union[np.ndarray, pd.Series]):
+        """
+        Initialize the parameters
+
+        Args:
+            features (Union[np.ndarray, pd.DataFrame]): features
+            labels (Union[np.ndarray, pd.Series]): labels
+
+        Returns:
+            np.ndarray, np.ndarray: features, labels
+        """
+        if isinstance(features, pd.DataFrame):
+            self.features_names = features.columns.to_list()
+
+        features = features.to_numpy() if isinstance(features, pd.DataFrame) else features
+        labels = labels.to_numpy() if isinstance(labels, pd.Series) else labels
+
+
+        self.bias = np.random.rand(1)
+
+        if features.ndim == 1:
+            self.weights = np.random.rand(self.n_grade)
+        else:
+            self.weights = np.random.rand(len(features[0]))
+
+        features = self.calculate_kernels(features)
+
+        return features, labels
+
+
+    def predict(self, features:Union[pd.DataFrame, np.ndarray]) -> np.ndarray:
+
+        features = features.to_numpy() if isinstance(features, pd.DataFrame) else features
+        features = self.calculate_kernels(features)
+        return self._foward(features)
     
-    kernels=features
 
-    if predict==False:
-      if features.ndim==1:
-        self.weights=np.random.rand(self.n_grade)
-      else :
-        self.weights=np.random.rand(len(features[0]))
+    def evaluate(self,
+                 features_test: Union[np.ndarray, pd.DataFrame],
+                 labels_test:Union[np.ndarray, pd.Series]) -> float:
+        
+        labels_test = labels_test.to_numpy() if isinstance(labels_test, pd.Series) else labels_test
 
-    for i in range(2,self.n_grade+1):
-      kernels=np.append(kernels,features**i)
+        return self.metric(labels_test,self.predict(features_test))
 
-    kernels=kernels.reshape(self.n_grade,len(features)).T
-
-    return kernels
-
-  def foward(self,features):
-    if features.ndim==1:
-      prediction=self.bias + features*self.weights
-    else:
-      prediction=self.bias + features@self.weights
-  
-    return prediction
-
-  def  bacward(self,labels,predictions, features):
-
-    gradient=self.loss_function(labels, predictions,derivative=True)
-
-    if features.ndim==1:
-      gradient_weights=gradient*np.mean(features)
-    else:
-      gradient_weights=gradient*np.mean(features, axis=0)
-
-    self.bias =self.bias-self.learning_ratio*gradient
-    self.weights= self.weights-self.learning_ratio*gradient_weights
-
-
-
-  def train(self,n_iters,features, labels, callbacks_period=2):
-
-    features=self.init_params(features)
-
-    history_train={
-        'iter':[],
-        'loss':[],
-        'r2_score':[]
-    }
-
-    for i in range(n_iters):
-      predictions=self.foward(features)
-      self.bacward(labels, predictions, features)
-
-      if (i+1)%callbacks_period==0:
-        score=self.metrics(labels,predictions)
-        loss=self.loss_function(labels, predictions)
-        history_train['loss'].append(loss)
-        history_train['r2_score'].append(score)
-        history_train['iter'].append(i+1)
-        print('Iter:\t{}\t{}\t r2_score:\t{:.2f}% \n\n'.format(i+1,50*'='+'>',score))
-
-    return history_train
-
-
-  def predict (self,features):
-    features=self.init_params(features, predict=True)
-    predictions=self.foward(features)
-    return predictions
-  
-  def save_weights(self,path):
-    with open(path, 'wb') as f:
-      np.save(f,self.bias)
-      np.save(f,self.weights)
-
-  
-  def load_weights(self,path):
-    with open(path, 'rb') as f:
-      bias = np.load(f)
-      weights = np.load(f)
-    self.bias= bias
-    self.weights=weights

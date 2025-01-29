@@ -1,51 +1,32 @@
 import numpy as np
-from pathlib import Path
-from typing import Callable
 import pandas as pd
 from typing import Union
+from typing import Callable
 
 class LinearModel:
 
-    """
-    Base class for linear models
-
-    Attributes:
-        bias: float
-        weights: np.array
-        loss_function: Callable[[np.array, np.array], np.array]
-        metric: Callable[[np.array, np.array], np.array]
-        learning_rate: float
-        history_train: dict
-    """
-
-    def __init__(self):
-        self.bias: float = None
-        self.weights: np.array = None
-        self.features_names:list = None
-        self.loss_function: Callable[[np.array, np.array], np.array] = None
-        self.metric: Callable[[np.array, np.array], np.array] = None
-        self.learning_rate: float = None
-        self.history_train: dict = None
-
-    def optimizers(self,
-                   loss_function: Callable[[np.array, np.array], np.array],
-                   metric: Callable[[np.array, np.array], np.array],
-                   learning_rate: float):
+    def __init__(self, 
+                loss_function: Callable[[np.ndarray, np.ndarray], np.ndarray], 
+                metric: Callable[[np.ndarray, np.ndarray], np.ndarray], 
+                lr: float):
         
         """
-        Method to set loss function, metric and learning rate
-
         Args:
-            loss_function (Callable[[np.array, np.array], np.array]): loss function
-            metric (Callable[[np.array, np.array], np.array]): metric
-            learning_rate (float): learning rate
+            loss_function (Callable[[np.ndarray, np.ndarray], np.ndarray]): loss function
+            metric (Callable[[np.ndarray, np.ndarray], np.ndarray]): metric
+            lr (float): learning ratio
         """
+        
+        self.bias: float = None
+        self.weights: np.ndarray = None
+        self.features_names:list = None
+        self.loss_function: Callable[[np.ndarray, np.ndarray], np.ndarray] = loss_function
+        self.metric: Callable[[np.ndarray, np.ndarray], np.ndarray] = metric
+        self.lr: float = lr
+        self.history_train: dict = None
+        
 
-        self.loss_function = loss_function
-        self.metric = metric
-        self.learning_rate = learning_rate
-
-    def _init_params(self, features: Union[np.array, pd.DataFrame], labels: Union[np.array, pd.Series]):
+    def _init_params(self, features: Union[np.ndarray, pd.DataFrame], labels: Union[np.ndarray, pd.Series]):
 
         if isinstance(features, pd.DataFrame):
             self.features_names = features.columns.to_list()
@@ -62,16 +43,29 @@ class LinearModel:
 
         return features, labels
 
-    def _foward(self, features: np.array):
-        pass
+    def _foward(self, features: np.ndarray):
+        if features.ndim == 1:
+            prediction = self.bias + features*self.weights
+        else:
+            prediction = self.bias + features@self.weights
 
-    def _bacward(self, labels: np.array, predictions: np.array, features: np.array):
+        return prediction
 
-        pass
+    def _bacward(self, labels: np.ndarray, predictions: np.ndarray, features: np.ndarray):
+
+        gradient = self.loss_function(labels, predictions, derivative=True)
+
+        if features.ndim == 1:
+            gradient_weights = gradient*np.mean(features)
+        else:
+            gradient_weights = gradient*np.mean(features, axis=0)
+
+        self.bias = self.bias-self.lr*gradient
+        self.weights = self.weights-self.lr*gradient_weights
 
     def train(self,
-              features: Union[np.array, pd.DataFrame],
-              labels: Union[np.array, pd.Series],
+              features: Union[np.ndarray, pd.DataFrame],
+              labels: Union[np.ndarray, pd.Series],
               n_iters: int,
               callbacks_period: int = 1,
               history_train: bool = False):
@@ -80,8 +74,8 @@ class LinearModel:
         Method to train the model
 
         Args:
-            features (Union[np.array, pd.DataFrame]): features
-            labels (Union[np.array, pd.Series]): labels
+            features (Union[np.ndarray, pd.DataFrame]): features
+            labels (Union[np.ndarray, pd.Series]): labels
             n_iters (int): number of iterations
             callbacks_period (int, optional): period of callbacks. The default is 1.
             history_train (bool, optional): save history of train. The default is False.
@@ -111,9 +105,8 @@ class LinearModel:
 
 
             if history_train and (i+1) % callbacks_period == 0:
-                print(labels,predictions)
-                score = self.metric(labels, predictions)
                 loss = self.loss_function(labels, predictions)
+                score = self.metric(labels, predictions)
                 self.history_train['iter'].append(i+1)
                 self.history_train['loss'].append(loss)
                 self.history_train['precision'].append(score)
@@ -122,34 +115,33 @@ class LinearModel:
                     'weights': self.weights
                 })
 
-                print(f"Iter:\t{i+1}\t{50*'='+'>'}\t {self.loss_function.__name__}: {loss:.3f}% \n")
+                print(f"Iter:\t{i+1}\t{50*'='+'>'}\t {self.loss_function.__name__}: {loss:.3f}% \t {self.metric.__name__}: {score:.2f}% \n")
 
-    def predict(self, features: Union[np.array, pd.DataFrame]) -> np.array:
+    def predict(self, features: Union[np.ndarray, pd.DataFrame]) -> np.ndarray:
 
         """
         Method to predict the labels
 
         Args:
-            features (Union[np.array, pd.DataFrame]): features
+            features (Union[np.ndarray, pd.DataFrame]): features
 
         Returns:
-            np.array: predictions
+            np.ndarray: predictions
         """
         
         features = features.to_numpy() if isinstance(features, pd.DataFrame) else features
-        predictions = self._foward(features)
-        return predictions
+        return self._foward(features)
 
     def evaluate(self,
-                 features_test: Union[np.array, pd.DataFrame],
-                 labels_test:Union[np.array, pd.Series]) -> float:
+                 features_test: Union[np.ndarray, pd.DataFrame],
+                 labels_test:Union[np.ndarray, pd.Series]) -> float:
         
         """
         Method to evaluate the model
 
         Args:
-            labels_test (Union[np.array, pd.Series]): labels
-            features_test (Union[np.array, pd.DataFrame]): features
+            labels_test (Union[np.ndarray, pd.Series]): labels
+            features_test (Union[np.ndarray, pd.DataFrame]): features
 
         Returns:
             float: score
