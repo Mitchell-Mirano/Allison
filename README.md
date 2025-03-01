@@ -3,7 +3,7 @@
 Allison: is a library  of Artificial Intelligence for
 beginners.
 
-![Allison Clustering Image](https://storage.googleapis.com/kamaqi/training_animation.gif)
+![Allison Clustering Image](https://storage.googleapis.com/open-projects-data/Allison/training_animation.gif)
 
 ## **About Allison**
 
