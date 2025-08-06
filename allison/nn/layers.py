@@ -5,10 +5,18 @@ class LayerDense:
     def __init__(self,n_features:int,n_neurones:int,activation_function:str):
         self.n_features = n_features
         self.n_neurones = n_neurones
-        self.weights=np.random.randn(self.n_features,self.n_neurones)**2
-        self.bias=np.random.randn(1,self.n_neurones)**2
-        self.z:np.array = None
         self.activation_function = activation_function
+
+        if self.activation_function.__name__ in ['tanh','sigmoid']:
+            self.std_dev = np.sqrt(2.0 / (n_features + n_neurones))
+        elif self.activation_function.__name__ in ['relu']:
+            self.std_dev = np.sqrt(2.0 / n_features)
+        else:
+            self.std_dev = np.sqrt(2.0 / (n_features + n_neurones))
+
+        self.weights=np.random.normal(loc=0,scale=self.std_dev,size=(n_features,n_neurones))
+        self.bias=np.random.normal(loc=0,scale=self.std_dev,size=(1,n_neurones))
+        self.z:np.array = None
         self.activation=None
 
     def foward(self,features):
@@ -19,7 +27,7 @@ class LayerDense:
 
     def backward_final_layer(self,lr,Delta_l,activation,activation_name):
 
-        if activation_name == "binary_cross_entropy":
+        if activation_name in ["binary_cross_entropy", "mean_squared_error"]:
             Delta_l = Delta_l*self.activation_function(self.z,True)
             
         if activation_name == "categorical_cross_entropy":

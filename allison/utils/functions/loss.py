@@ -1,6 +1,6 @@
 import numpy as np
 
-def mean_square_error(labels, predictions,derivative=False):
+def mean_squared_error(labels, predictions,derivative=False):
   if derivative==False:
     mse=np.mean((labels-predictions)**2)
     return mse

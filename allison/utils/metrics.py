@@ -10,12 +10,10 @@ def r2_score(labels, predictions):
 
 
 def accuracy(preds,labels):
-
-    preds= preds
-    labels= labels
-    correct = np.sum(preds==labels)
-
-    return (correct/len(preds))*100
+    
+    if labels.ndim==1:
+        return 100*np.mean(preds==labels)
+    return 100*np.mean(np.sum(preds==labels,axis=1)/labels.shape[1])
 
 def recall(labels, predictions):
     targets=list(set(labels))

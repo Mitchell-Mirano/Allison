@@ -13,6 +13,6 @@ def get_numeric_labels(labels:np.array):
     numeric_labels = []
     for label in labels:
         index = np.where(label == np.max(label))[0][0]
-        numeric_labels.append(index+1)
+        numeric_labels.append(index)
 
     return np.array(numeric_labels)

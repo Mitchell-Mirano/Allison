@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 
 def train_test_split(X: pd.DataFrame,
-                     y: pd.Series,
+                     Y: pd.Series = None,
                      test_size: float = 0.2,
                      random_state: int = 42,
                      shuffle: bool = True) -> tuple:
@@ -31,15 +31,18 @@ def train_test_split(X: pd.DataFrame,
     if shuffle:
         indices = np.random.permutation(len(X))
         X = X.iloc[indices]
-        y = y.iloc[indices]
+        if Y:
+            Y = Y.iloc[indices]
 
     # Calculate the split index
     split_index = int(len(X) * (1 - test_size))
 
     # Split the data
     X_train = X.iloc[:split_index]
-    y_train = y.iloc[:split_index]
     X_test = X.iloc[split_index:]
-    y_test = y.iloc[split_index:]
+    if Y:
+        Y_train = Y.iloc[:split_index]
+        Y_test = Y.iloc[split_index:]
+        return X_train, X_test, Y_train, Y_test
 
-    return X_train, X_test, y_train, y_test
+    return X_train, X_test

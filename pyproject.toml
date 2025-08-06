@@ -1,17 +1,17 @@
-[tool.poetry]
+[project]
 name = "allison"
 version = "0.1.0"
-description = "A Machine Learning library for begainers"
-authors = ["Mitchell Mirano <mitchellmirano25@gmail.com>"]
+description = "Add your description here"
 readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "numpy>=2.3.2",
+]
 
-[tool.poetry.dependencies]
-python = "^3.12"
-numpy = "^1.24.2"
-
-[tool.poetry.group.dev.dependencies]
-jupyter = "^1.1.1"
-matplotlib = "^3.9.2"
-seaborn = "^0.13.2"
-pytest = "^8.3.3"
-
+[dependency-groups]
+dev = [
+    "jupyter>=1.1.1",
+    "matplotlib>=3.10.3",
+    "pytest>=8.4.1",
+    "seaborn>=0.13.2",
+]

@@ -28,7 +28,7 @@ class NeuralNetwork:
         if loss_function_name == "categorical_cross_entropy":
             DcDa = activation - labels
             
-        if loss_function_name == "binary_cross_entropy":
+        if loss_function_name in ["binary_cross_entropy", "mean_squared_error"]:
             DcDa = self.loss_function(labels,activation,True)
             
         for i,layer in reversed(self.layers.items()):
@@ -51,19 +51,26 @@ class NeuralNetwork:
             self.bacward(activation,labels,features)
             if  i%steps == 0 and verbose:
                 error=self.loss_function(labels,activation)
-                accuracy=self.metric(activation,labels)
+                accuracy=self.metric(self.predict(features),labels)
                 print(f"Iter:{i:.2f} \t Error:{error:.6f} \t Accuracy:{accuracy:.6f}%")
     
     def predict(self,features)->np.array:
-        predictions=self.foward(features)
-        condition=predictions==np.max(predictions, axis = 1,keepdims=True)
-        labels = condition.astype(int)
-        return labels
+        out = self.foward(features)
+
+        if self.loss_function.__name__ in ["binary_cross_entropy", "categorical_cross_entropy"]:
+            if out.shape[1] == 1:
+                return (out > 0.5).astype(int).squeeze()
+            return (out == out.max(axis=1, keepdims=True)).astype(int)
+
+        
+        if self.loss_function.__name__ == "mean_squared_error":
+            if out.shape[1] == 1:
+                return out.squeeze()
+            return out
     
 
     def evaluate(self,features,labels)->float:
-        predictions = self.foward(features)
-        return self.metric(predictions,labels)
+        return self.metric(self.predict(features),labels)
     
 
     def summary(self)->None:
