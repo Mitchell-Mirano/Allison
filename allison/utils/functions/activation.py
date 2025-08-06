@@ -1,10 +1,19 @@
 import numpy as np
 
+
+def linear(feature,derivative=False):
+  if derivative==False:
+    return feature
+  else :
+    return np.ones(feature.shape)
+
+
 def sigmoid(sumatory,derivative=False):
+    salida = 1/(1+np.exp(-sumatory))
     if derivative==False:
-        return 1/(1+np.exp(-sumatory))
+        return salida
     else :
-        return np.exp(-sumatory)/((1+ np.exp(-sumatory)))**2
+        return salida*(1-salida)
 
 def softmax(predictions:np.array):
     predictions = np.exp(predictions)
