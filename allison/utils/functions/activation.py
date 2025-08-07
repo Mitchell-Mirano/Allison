@@ -15,9 +15,12 @@ def sigmoid(sumatory,derivative=False):
     else :
         return salida*(1-salida)
 
-def softmax(predictions:np.array):
-    predictions = np.exp(predictions)
-    return predictions/np.sum(predictions,axis=1,keepdims=True)
+def softmax(predictions:np.array, derivative=False):
+    if derivative==False:
+      predictions = np.exp(predictions)
+      return predictions/np.sum(predictions,axis=1,keepdims=True)
+    else:
+      return 1
 
 def relu(feature,derivative=False):
   if derivative==False:

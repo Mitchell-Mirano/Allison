@@ -1,7 +1,10 @@
 [project]
 name = "allison"
 version = "0.1.0"
-description = "Add your description here"
+description = "A Machine Learning library for begainers"
+authors = [
+  {name = "Mitchell Mirano", email = "mitchellmirano25@gmail.com"},
+]
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [

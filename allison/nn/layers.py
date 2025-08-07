@@ -29,14 +29,9 @@ class LayerDense:
         return self.activation
 
 
-    def backward_final_layer(self,Delta_l,activation,activation_name):
-
-        if activation_name in ["binary_cross_entropy", "mean_squared_error"]:
-            Delta_l = Delta_l*self.activation_function(self.z,True)
+    def backward_final_layer(self,Delta_l,activation):
+        Delta_l = Delta_l*self.activation_function(self.z,True)
             
-        if activation_name == "categorical_cross_entropy":
-            pass
-        
         self.DL=activation.T@Delta_l
         self.Db=Delta_l.sum(axis=0)
     
