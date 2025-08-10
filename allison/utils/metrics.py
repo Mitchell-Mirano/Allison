@@ -3,10 +3,10 @@ import numpy as np
 def predict_labels(predictions):
     return np.where(predictions<=0.5,0,1)
 
-def r2_score(labels, predictions):
-    errors=np.sum((labels-predictions)**2)
-    varianza=labels.var()*len(labels)
-    return (1-(errors/varianza))*100
+def r2_score(y_pred,Y_train):
+    sr = np.mean((y_pred-Y_train)**2)
+    sy = np.mean((Y_train-np.mean(Y_train))**2)
+    return 1-(sr/sy)
 
 
 def accuracy(preds,labels):

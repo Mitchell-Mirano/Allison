@@ -1,35 +1,33 @@
-from allison.nn.models import NeuralNetwork
+from allison.base.tensor import Tensor
 import numpy as np
 
 class SGD:
+    def __init__(self, parameters: list[Tensor], learning_rate=1e-3):
+        self.parameters = parameters
+        self.lr = learning_rate
 
-    def __init__(self, learning_rate:float = 0.001):
-        self.learning_rate = learning_rate
+    def zero_grad(self):
+        for param in self.parameters:
+            param.grad = np.zeros_like(param.grad)
 
-    def update(self, network:NeuralNetwork):
-        for layer in network.layers.values():
-            layer.weights -= self.learning_rate * layer.DL
-            layer.bias -= self.learning_rate * layer.Db
-
+    def step(self):
+        for param in self.parameters:
+            param.data -= self.lr * param.grad
 
 class SGDMomentum:
-
-    def __init__(self, learning_rate:float = 0.001, momentum:float = 0.1):
+    def __init__(self, parameters: list[Tensor], learning_rate=1e-3, momentum=0.9):
+        self.parameters = parameters
         self.learning_rate = learning_rate
         self.momentum = momentum
         self.vts = {}
 
-    def update(self, network:NeuralNetwork):
+    def zero_grad(self):
+        for param in self.parameters:
+            param.grad = np.zeros_like(param.grad)
 
-        for i, layer in network.layers.items():
+    def step(self):
+        for i, param in enumerate(self.parameters):
             if i not in self.vts:
-                self.vts[i] = {
-                    'Vw': np.zeros(layer.weights.shape),
-                    'Vb': np.zeros(layer.bias.shape)
-                }
-
-            self.vts[i]['Vw'] = self.momentum * self.vts[i]['Vw'] + layer.DL
-            self.vts[i]['Vb'] = self.momentum * self.vts[i]['Vb'] + layer.Db
-
-            layer.weights -= self.learning_rate * self.vts[i]['Vw']
-            layer.bias -= self.learning_rate * self.vts[i]['Vb']
+                self.vts[i] = np.zeros_like(param.data)
+            self.vts[i] = self.momentum * self.vts[i] + param.grad
+            param.data -= self.learning_rate * self.vts[i]

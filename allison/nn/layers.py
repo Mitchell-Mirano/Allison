@@ -15,7 +15,7 @@ class LayerDense:
             self.std_dev = np.sqrt(2.0 / (n_features + n_neurones))
 
         self.weights=np.random.normal(loc=0,scale=self.std_dev,size=(n_features,n_neurones))
-        self.bias=np.random.normal(loc=0,scale=self.std_dev,size=(1,n_neurones))
+        self.bias=np.zeros((1,n_neurones))
 
         self.z:np.array = None
         self.activation=None
