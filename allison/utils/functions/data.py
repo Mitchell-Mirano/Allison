@@ -31,7 +31,7 @@ def train_test_split(X: pd.DataFrame,
     if shuffle:
         indices = np.random.permutation(len(X))
         X = X.iloc[indices]
-        if Y:
+        if Y is not None:
             Y = Y.iloc[indices]
 
     # Calculate the split index
@@ -40,7 +40,7 @@ def train_test_split(X: pd.DataFrame,
     # Split the data
     X_train = X.iloc[:split_index]
     X_test = X.iloc[split_index:]
-    if Y:
+    if Y is not None:
         Y_train = Y.iloc[:split_index]
         Y_test = Y.iloc[split_index:]
         return X_train, X_test, Y_train, Y_test

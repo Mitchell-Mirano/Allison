@@ -115,7 +115,7 @@ class LinearModel:
                     'weights': self.weights
                 })
 
-                print(f"Iter:\t{i+1}\t{50*'='+'>'}\t {self.loss_function.__name__}: {loss:.3f}% \t {self.metric.__name__}: {score:.2f}% \n")
+                print(f"Iter:\t{i+1}\t{50*'='+'>'}\t {self.loss_function.__name__}: {loss:.3f}% \t {self.metric.__name__}: {100*score:.2f}% \n")
 
     def predict(self, features: Union[np.ndarray, pd.DataFrame]) -> np.ndarray:
 

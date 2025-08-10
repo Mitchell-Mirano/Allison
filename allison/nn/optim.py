@@ -1,4 +1,4 @@
-from allison.base.tensor import Tensor
+from allison.nn.tensor import Tensor
 import numpy as np
 
 class SGD:

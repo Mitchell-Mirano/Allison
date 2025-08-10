@@ -98,6 +98,17 @@ class Tensor:
         out._backward = _backward
         return out
 
+    def __pow__(self, other):
+        assert isinstance(other, (int, float)), "only supporting int/float powers for now"
+        out = Tensor(self.data**other, (self,), f'**{other}')
+
+        def _backward():
+            self.grad += out.grad * other * (self.data**(other-1))
+
+        out._backward = _backward
+        return out
+    
+    
     def backward(self):
         topo = []
         visited = set()
@@ -115,8 +126,6 @@ class Tensor:
         for node in reversed(topo):
             node._backward()
 
-    def __repr__(self):
-        return f"Tensor(\n{self.data}, shape={self.data.shape})"
     
     def mean(self):
 
@@ -142,3 +151,9 @@ class Tensor:
 
         return grad
 
+    def __repr__(self):
+        return f"Tensor(\n{self.data}, shape={self.data.shape})"
+    
+    @property
+    def shape(self):
+        return self.data.shape
