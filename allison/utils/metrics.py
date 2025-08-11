@@ -12,8 +12,8 @@ def r2_score(y_pred,Y_train):
 def accuracy(preds,labels):
     
     if labels.ndim==1:
-        return 100*np.mean(preds==labels)
-    return 100*np.mean(np.sum(preds==labels,axis=1)/labels.shape[1])
+        return np.mean(preds==labels)
+    return np.mean(np.sum(preds==labels,axis=1)/labels.shape[1])
 
 def recall(labels, predictions):
     targets=list(set(labels))

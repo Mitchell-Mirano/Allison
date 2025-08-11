@@ -34,12 +34,16 @@ class LinearModel:
         features = features.to_numpy() if isinstance(features, pd.DataFrame) else features
         labels = labels.to_numpy() if isinstance(labels, pd.Series) else labels
 
-        self.bias = np.random.rand(1)
+
+
+        self.bias = np.array([0.0])
 
         if features.ndim == 1:
-            self.weights = np.random.rand(1)
+            std_dev = np.sqrt(2.0 / 1)  # He init para ReLU
+            self.weights = np.random.normal(0, std_dev, 1)
         else:
-            self.weights = np.random.rand(len(features[0]))
+            std_dev = np.sqrt(2.0 / len(features[0]))  # He init para ReLU
+            self.weights = np.random.normal(0, std_dev, len(features[0]))
 
         return features, labels
 
