@@ -12,15 +12,29 @@ class no_grad:
         global _autograd_enabled
         _autograd_enabled = self.prev
 
+def _noop():
+    """Función vacía para usar como backward por defecto."""
+    return None
 
 class Tensor:
     def __init__(self, data, _children=(), _op=''):
         self.data = data if isinstance(data, np.ndarray) else np.array(data)
         self.grad = np.zeros_like(self.data)
-        self._backward = lambda: None
+        self._backward = _noop
         global _autograd_enabled
         self._prev = set(_children) if _autograd_enabled else set()
         self._op = _op if _autograd_enabled else ''
+
+    def __getstate__(self) -> object:
+        return {'data': self.data}
+    
+    def __setstate__(self, state):
+        self.data = state['data']
+        self.grad = np.zeros_like(self.data)
+        self._backward = _noop
+        self._prev = set()
+        self._op = ''
+ 
 
     def __add__(self, other):
         other = other if isinstance(other, Tensor) else Tensor(other)
@@ -150,9 +164,13 @@ class Tensor:
                 grad = grad.sum(axis=axis, keepdims=True)
 
         return grad
+    
+
+    def __str__(self) -> str:
+        return f"Tensor(\n{self.data}, shape={self.data.shape})"
 
     def __repr__(self):
-        return f"Tensor(\n{self.data}, shape={self.data.shape})"
+        return self.__str__()
     
     @property
     def shape(self):
