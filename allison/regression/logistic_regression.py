@@ -19,6 +19,15 @@ class LogisticRegression(BaseRegressor):
         self.function_of_activation:Callable = sigmoid
 
 
+    def init_weights(self,n_features: int):
+
+        # init for sigmoid
+
+        std_dev = np.sqrt(2.0 / (n_features +1))
+
+        self.weights = np.random.normal(0, std_dev, n_features)
+
+
     def _foward(self, features: np.ndarray):
 
         if features.ndim == 1:
@@ -98,7 +107,7 @@ class LogisticRegression(BaseRegressor):
                     'weights': self.weights
                 })
 
-                print(f"Iter:\t{i+1}\t{50*'='+'>'}\t {self.loss_function.__name__}: {loss:.3f}\t {self.metric.__name__}: {score:.2f}% \n")
+                print(f"Iter:\t{i+1}\t{50*'='+'>'}\t {self.loss_function.__name__}: {loss:.3f}\t {self.metric.__name__}: {100*score:.2f}% \n")
 
 
     def predict(self, features: np.ndarray,probs:bool=False) -> np.ndarray:

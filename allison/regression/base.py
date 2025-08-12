@@ -17,14 +17,19 @@ class BaseRegressor:
             lr (float): learning ratio
         """
         
-        self.bias: float = None
+        self.bias = np.array([0.0])
         self.weights: np.ndarray = None
         self.features_names:list = None
         self.loss_function: Callable[[np.ndarray, np.ndarray], np.ndarray] = loss_function
         self.metric: Callable[[np.ndarray, np.ndarray], np.ndarray] = metric
         self.lr: float = lr
         self.history_train: dict = None
-        
+    
+
+    def init_weights(self,n_features: int):
+        std_dev = np.sqrt(2.0 / n_features)  # He init para ReLU
+        self.weights = np.random.normal(0, std_dev, n_features)
+
 
     def _init_params(self, features: Union[np.ndarray, pd.DataFrame], labels: Union[np.ndarray, pd.Series]):
 
@@ -35,15 +40,11 @@ class BaseRegressor:
         labels = labels.to_numpy() if isinstance(labels, pd.Series) else labels
 
 
+        n_features = 1
+        if features.ndim == 2:
+            n_features = features.shape[1]
 
-        self.bias = np.array([0.0])
-
-        if features.ndim == 1:
-            std_dev = np.sqrt(2.0 / 1)  # He init para ReLU
-            self.weights = np.random.normal(0, std_dev, 1)
-        else:
-            std_dev = np.sqrt(2.0 / len(features[0]))  # He init para ReLU
-            self.weights = np.random.normal(0, std_dev, len(features[0]))
+        self.init_weights(n_features)
 
         return features, labels
 

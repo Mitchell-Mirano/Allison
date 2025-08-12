@@ -57,15 +57,14 @@ class PolinomicRegression(BaseRegressor):
         features = features.to_numpy() if isinstance(features, pd.DataFrame) else features
         labels = labels.to_numpy() if isinstance(labels, pd.Series) else labels
 
-
-        self.bias = np.random.rand(1)
-
-        if features.ndim == 1:
-            self.weights = np.random.rand(self.n_grade)
-        else:
-            self.weights = np.random.rand(len(features[0]))
-
         features = self.calculate_kernels(features)
+
+        n_features = 1
+        if features.ndim == 2:
+            n_features = features.shape[1]
+
+        self.init_weights(n_features)   
+
 
         return features, labels
 
