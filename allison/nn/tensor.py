@@ -175,3 +175,6 @@ class Tensor:
     @property
     def shape(self):
         return self.data.shape
+    
+    def to_numpy(self):
+        return self.data
