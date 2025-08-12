@@ -1,0 +1,4 @@
+from .linear_regression import LinearRegression
+from .logistic_regression import LogisticRegression
+from .functional_regression import FunctionalRegression
+from .polinomic_regression import PolinomicRegression

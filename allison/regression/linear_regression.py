@@ -1,9 +1,9 @@
 import numpy as np
 from pathlib import Path
 from typing import Callable
-from allison.linear_models.linear_model import LinearModel
+from allison.regression.base import BaseRegressor
 
-class LinearRegression(LinearModel):
+class LinearRegression(BaseRegressor):
 
     def __init__(self, 
                 loss_function: Callable[[np.ndarray, np.ndarray], np.ndarray], 

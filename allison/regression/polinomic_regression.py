@@ -1,5 +1,5 @@
 import numpy as np
-from allison.linear_models.linear_model import LinearModel
+from allison.regression.base import BaseRegressor
 from typing import Callable
 import pandas as pd
 from typing import Union
@@ -7,7 +7,7 @@ import numpy as np
 
 
 
-class PolinomicRegression(LinearModel):
+class PolinomicRegression(BaseRegressor):
     """
     Polinomic Regression
     """

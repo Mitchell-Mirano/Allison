@@ -3,7 +3,7 @@ import pandas as pd
 from typing import Union
 from typing import Callable
 
-class LinearModel:
+class BaseRegressor:
 
     def __init__(self, 
                 loss_function: Callable[[np.ndarray, np.ndarray], np.ndarray], 

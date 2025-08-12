@@ -1,4 +1,5 @@
 import numpy as np
+from allison.regression.base import BaseRegressor
 
 class BaseFunctions:
 
