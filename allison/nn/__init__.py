@@ -4,3 +4,4 @@ from .optim import SGD,SGDMomentum
 from .net import NeuralNetwork
 from .loss import MSELoss,CrossEntropyLoss
 from .scores import r2_score,accuracy
+from .softmax import softmax

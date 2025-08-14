@@ -31,3 +31,10 @@ class NeuralNetwork:
 
     def __call__(self, x: Tensor) -> Tensor:
         return self.forward(x)
+    
+
+    def weights(self):
+        return self.__dict__
+    
+    def load_weights(self, weights):
+        self.__dict__.update(weights)
