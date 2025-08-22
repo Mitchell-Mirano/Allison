@@ -1,19 +1,36 @@
 import numpy as np
+from allison.nn.tensor import Tensor
+
+
 
 def predict_labels(predictions):
     return np.where(predictions<=0.5,0,1)
 
-def r2_score(y_pred,Y_train):
-    sr = np.mean((y_pred-Y_train)**2)
-    sy = np.mean((Y_train-np.mean(Y_train))**2)
+def r2_score(Y_true, Y_pred):
+
+    if isinstance(Y_true, Tensor):
+        Y_true = Y_true.data
+
+    if isinstance(Y_pred, Tensor):
+        Y_pred = Y_pred.data
+
+    sr = np.mean((Y_true-Y_pred)**2)
+    sy = np.mean((Y_true-np.mean(Y_true))**2)
     return 1-(sr/sy)
 
 
-def accuracy(preds,labels):
+def accuracy(Y_true, Y_pred):
+
+    if isinstance(Y_true, Tensor):
+        Y_true = Y_true.data
+
+    if isinstance(Y_pred, Tensor):
+        Y_pred = Y_pred.data
+
     
-    if labels.ndim==1:
-        return np.mean(preds==labels)
-    return np.mean(np.sum(preds==labels,axis=1)/labels.shape[1])
+    if Y_true.ndim==1:
+        return np.mean(Y_true==Y_pred)
+    return np.mean(np.sum(Y_true==Y_pred,axis=1)/Y_true.shape[1])
 
 def recall(labels, predictions):
     targets=list(set(labels))
