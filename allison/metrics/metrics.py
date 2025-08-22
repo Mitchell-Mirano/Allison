@@ -3,9 +3,6 @@ from allison.nn.tensor import Tensor
 
 
 
-def predict_labels(predictions):
-    return np.where(predictions<=0.5,0,1)
-
 def r2_score(Y_true, Y_pred):
 
     if isinstance(Y_true, Tensor):

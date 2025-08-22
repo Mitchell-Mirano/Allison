@@ -1,11 +1,17 @@
 # -*- coding: utf-8 -*-
 from typing import Callable
 import numpy as np
-from allison.metrics.metrics import predict_labels
 from allison.regression.base import BaseRegressor
-from allison.utils.functions.activation import sigmoid
 from typing import Union
 import pandas as pd
+
+
+def sigmoid(sumatory,derivative=False):
+    salida = 1/(1+np.exp(-sumatory))
+    if derivative==False:
+        return salida
+    else :
+        return salida*(1-salida)
 
 
 class LogisticRegression(BaseRegressor):
