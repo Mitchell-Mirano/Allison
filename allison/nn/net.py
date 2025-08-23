@@ -71,7 +71,10 @@ class NeuralNetwork:
         return self  # para encadenar llamadas
 
     def weights(self):
-        return self.__dict__
+
+        if self.device == 'cpu':
+            return self.__dict__
+        return self.to('cpu').__dict__
 
     def load_weights(self, weights):
         self.__dict__.update(weights)

@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 from allison import _cupy_available
 
 if _cupy_available:
@@ -31,7 +32,7 @@ class Tensor:
         
         xp = cp if (device == 'gpu' and _cupy_available) else np
 
-        if isinstance(data, (list, tuple,np.ndarray)):
+        if isinstance(data, (list, tuple,np.ndarray,pd.DataFrame, pd.Series)):
             data = xp.array(data)
 
         self.data = data
@@ -57,6 +58,8 @@ class Tensor:
         self.device = state['device']
         self.requires_grad = True
 
+    def __getitem__(self, idx):
+        return Tensor(self.data[idx], (self,), f'[{idx}]',device=self.device,requires_grad=self.requires_grad)
 
 
     def to(self, device):

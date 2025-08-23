@@ -7,15 +7,15 @@ if _cupy_available:
 
 
 class Relu:
-    def __call__(self, other: Tensor):
+    def __call__(self, X: Tensor):
 
-        xp = cp if other.device == 'gpu' else np
+        xp = cp if X.device == 'gpu' else np
 
-        out = Tensor(xp.maximum(0, other.data), (other,), 'ReLU',device=other.device,requires_grad=other.requires_grad)
+        out = Tensor(xp.maximum(0, X.data), (X,), 'ReLU',device=X.device,requires_grad=X.requires_grad)
         
         def _backward():
             # Usar other.data para claridad
-            other.grad += out.grad * (other.data > 0)
+            X.grad += out.grad * (X.data > 0)
         out._backward = _backward
         return out
     
@@ -27,9 +27,9 @@ class Linear:
         self.W = Tensor(np.random.normal(0, self.std_dev, size=(features, neurons)),requires_grad=True)
         self.b = Tensor(np.zeros((1, neurons)),requires_grad=True)  # Bias inicializado en 0
 
-    def __call__(self, other: Tensor):
+    def __call__(self, X: Tensor):
 
-        return other @ self.W + self.b
+        return X @ self.W + self.b
     
     def to(self, device):
         self.W = self.W.to(device)

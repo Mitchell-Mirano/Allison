@@ -11,8 +11,8 @@ def r2_score(Y_true, Y_pred):
     if isinstance(Y_pred, Tensor):
         Y_pred = Y_pred.data
 
-    sr = np.mean((Y_true-Y_pred)**2)
-    sy = np.mean((Y_true-np.mean(Y_true))**2)
+    sr = ((Y_true-Y_pred)**2).mean()
+    sy = ((Y_true-Y_true.mean())**2).mean()
     return 1-(sr/sy)
 
 
