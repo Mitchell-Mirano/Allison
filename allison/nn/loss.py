@@ -1,6 +1,7 @@
 import numpy as np
 from allison.nn.tensor import Tensor
 
+
 class MSELoss:
     def __call__(self, y_real, y_pred):
         return ((y_real - y_pred)**2).mean()
