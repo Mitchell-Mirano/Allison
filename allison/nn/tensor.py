@@ -60,6 +60,9 @@ class Tensor:
 
     def __getitem__(self, idx):
         return Tensor(self.data[idx], (self,), f'[{idx}]',device=self.device,requires_grad=self.requires_grad)
+    
+    def __len__(self):
+        return len(self.data)
 
 
     def to(self, device):
