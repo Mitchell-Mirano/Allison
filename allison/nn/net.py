@@ -1,5 +1,4 @@
 from allison.nn.tensor import Tensor
-from allison.nn.layers import Linear
 
 class NeuralNetwork:
     def __init__(self):
@@ -15,13 +14,16 @@ class NeuralNetwork:
         params = []
 
         def _gather_params(obj):
-            if isinstance(obj, Linear):
-                if getattr(obj, "W", None) is not None: params.append(obj.W)
-                if getattr(obj, "b", None) is not None: params.append(obj.b)
+
+            if hasattr(obj, "parameters") and callable(obj.parameters):
+                params.extend(obj.parameters())
+
             elif isinstance(obj, NeuralNetwork):
                 params.extend(obj.parameters())
+
             elif isinstance(obj, (list, tuple)):
                 for layer in obj: _gather_params(layer)
+                
             elif isinstance(obj, dict):
                 for layer in obj.values(): _gather_params(layer)
 
@@ -29,47 +31,59 @@ class NeuralNetwork:
             _gather_params(layer)
         return params
 
-    def __call__(self, x: Tensor) -> Tensor:
-        return self.forward(x)
 
     def to(self, device):
-        """Mueve TODOS los tensores encontrados en el grafo de atributos al device."""
+        """Mueve TODOS los tensores/capas/subredes al device."""
+
         def _apply(obj):
-            # 1) Tensors: retornar el tensor movido
-            if isinstance(obj, Tensor):
+            # 1) Si el objeto tiene método .to, delegamos a él
+            if hasattr(obj, "to") and callable(obj.to):
                 return obj.to(device)
 
-            # 2) Capas Linear: mover pesos y bias y devolver el propio objeto
-            if isinstance(obj, Linear):
-                if getattr(obj, "W", None) is not None:
-                    obj.W = _apply(obj.W)
-                if getattr(obj, "b", None) is not None:
-                    obj.b = _apply(obj.b)
-                return obj
-
-            # 3) Submodelos
-            if isinstance(obj, NeuralNetwork):
-                for k, v in obj.__dict__.items():
-                    # Evitar ciclos si quieres, pero en general está bien:
-                    setattr(obj, k, _apply(v))
-                obj.device = device
-                return obj
-
-            # 4) Estructuras compuestas
+            # 2) Si es estructura compuesta → aplicar recursivamente
             if isinstance(obj, list):
-                return [ _apply(v) for v in obj ]
+                return [_apply(v) for v in obj]
             if isinstance(obj, tuple):
                 return tuple(_apply(v) for v in obj)
             if isinstance(obj, dict):
-                return { k: _apply(v) for k, v in obj.items() }
+                return {k: _apply(v) for k, v in obj.items()}
 
-            # 5) Otros tipos: devolver tal cual
+            # 3) Otro tipo → devolver tal cual
             return obj
 
-        _apply(self)
+        # Aplicamos a todos los atributos del modelo
+        for k, v in self.__dict__.items():
+            setattr(self, k, _apply(v))
+
         self.device = device
         return self  # para encadenar llamadas
+    
 
+    def train(self):
+        def _apply(obj):
+            if hasattr(obj, "training"):
+                obj.training = True
+            if isinstance(obj, (list, tuple)):
+                for o in obj: _apply(o)
+            elif isinstance(obj, dict):
+                for v in obj.values(): _apply(v)
+        for v in self.__dict__.values():
+            _apply(v)
+
+    def eval(self):
+        def _apply(obj):
+            if hasattr(obj, "training"):
+                obj.training = False
+            if isinstance(obj, (list, tuple)):
+                for o in obj: _apply(o)
+            elif isinstance(obj, dict):
+                for v in obj.values(): _apply(v)
+        for v in self.__dict__.values():
+            _apply(v)
+
+    def __call__(self, x: Tensor) -> Tensor:
+        return self.forward(x)
+    
     def weights(self):
 
         if self.device == 'cpu':

@@ -66,17 +66,24 @@ class Tensor:
 
 
     def to(self, device):
+
         if device == self.device:
             return self
+        
         if device == "gpu":
             if not _cupy_available:
                 raise RuntimeError("CuPy no está instalado, no puedes usar CUDA")
-            new_data = cp.asarray(self.data)
+            self.data = cp.asarray(self.data)
+            self.grad = cp.array(self.grad) if (self.requires_grad and self.grad is not None) else None
         elif device == "cpu":
-            new_data = cp.asnumpy(self.data) if self.device == "gpu" else self.data
+            self.data = cp.asnumpy(self.data) if self.device == "gpu" else self.data
+            self.grad = cp.asnumpy(self.grad) if (self.requires_grad and self.grad is not None) else None
         else:
             raise ValueError("device debe ser 'cpu' o 'gpu'")
-        return Tensor(new_data, requires_grad=self.requires_grad, device=device)
+        
+        self.device = device
+
+        return self 
 
     def to_cpu(self):
         return self.to("cpu")
@@ -111,7 +118,7 @@ class Tensor:
     
 
     def __sub__(self, other):
-        other = other if isinstance(other, Tensor) else Tensor(other)
+        other = other if isinstance(other, Tensor) else Tensor(other, device=self.device)
 
         global _autograd_enabled
 
@@ -135,9 +142,12 @@ class Tensor:
 
         out._backward = _backward
         return out
+    
+    def __rsub__(self, other):
+        return self.__sub__(other) 
 
     def __mul__(self, other):
-        other = other if isinstance(other, Tensor) else Tensor(other)
+        other = other if isinstance(other, Tensor) else Tensor(other, device=self.device)
 
         global _autograd_enabled
 
@@ -162,6 +172,9 @@ class Tensor:
 
         out._backward = _backward
         return out
+    
+    def __rmul__(self, other):
+        return self.__mul__(other)
 
     def __matmul__(self, other):
         other = other if isinstance(other, Tensor) else Tensor(other)
@@ -210,6 +223,34 @@ class Tensor:
             
             if self.requires_grad:
                 self.grad += out.grad * other * (self.data**(other-1))
+
+        out._backward = _backward
+        return out
+    
+    def __truediv__(self, other):
+        
+        other = other if isinstance(other, Tensor) else Tensor(other)
+
+        global _autograd_enabled
+
+        if not _autograd_enabled:
+            return Tensor(self.data / other.data, device=self.device)
+        
+        requires_grad = self.requires_grad or other.requires_grad
+
+        out = Tensor(self.data / other.data, (self, other), '/',device=self.device,requires_grad=requires_grad)
+
+        def _backward():
+            if out.grad is None:
+                return
+            
+            if self.requires_grad:
+                grad_self = Tensor._match_shape(out.grad / other.data, self.data.shape)
+                self.grad += grad_self
+
+            if other.requires_grad:
+                grad_other = Tensor._match_shape(-self.data * out.grad / (other.data**2), other.data.shape)
+                other.grad += grad_other
 
         out._backward = _backward
         return out

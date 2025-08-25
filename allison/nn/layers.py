@@ -34,3 +34,68 @@ class Linear:
     def to(self, device):
         self.W = self.W.to(device)
         self.b = self.b.to(device)
+        return self
+    
+    def parameters(self):
+        return [self.W, self.b]
+
+
+class BatchNorm1D:
+    def __init__(self, features: int, alpha: float = 0.9, epsilon: float = 1e-5, device='cpu'):
+        self.gamma = Tensor(np.ones((1, features)), requires_grad=True)
+        self.beta = Tensor(np.zeros((1, features)), requires_grad=True)
+
+        # buffers (no requieren gradiente)
+        self.running_mean = np.zeros((1, features), dtype=np.float32)
+        self.running_var = np.ones((1, features), dtype=np.float32)
+
+        self.alpha = alpha
+        self.epsilon = epsilon
+        self.device = device
+        self.training = True
+
+    def __call__(self, X: Tensor):
+        xp = cp if X.device == 'gpu' else np
+
+        if self.training:
+            # estadísticas del batch
+            batch_mean = xp.mean(X.data, axis=0, keepdims=True)
+            batch_var = xp.var(X.data, axis=0, keepdims=True)
+
+            # actualizar los buffers (NO tensores, solo numpy/cupy arrays)
+            self.running_mean = self.alpha * self.running_mean + (1 - self.alpha) * batch_mean
+            self.running_var = self.alpha * self.running_var + (1 - self.alpha) * batch_var
+
+            mean = batch_mean
+            var = batch_var
+        else:
+            # usar estadísticas acumuladas
+            mean = self.running_mean
+            var = self.running_var
+
+        # normalizar
+        X_norm = (X - mean) / xp.sqrt(var + self.epsilon)
+        out = self.gamma * X_norm + self.beta
+        return out
+
+    def to(self, device):
+        if device == self.device:
+            return self
+
+        if device == 'gpu' and not _cupy_available:
+            raise Exception('Cupy is not available')
+
+        if device == 'gpu':
+            self.running_mean = cp.array(self.running_mean)
+            self.running_var = cp.array(self.running_var)
+        else:  # cpu
+            self.running_mean = cp.asnumpy(self.running_mean)
+            self.running_var = cp.asnumpy(self.running_var)
+
+        self.gamma = self.gamma.to(device)
+        self.beta = self.beta.to(device)
+        self.device = device
+        return self
+
+    def parameters(self):
+        return [self.gamma, self.beta]
