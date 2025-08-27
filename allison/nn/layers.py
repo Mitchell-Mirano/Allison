@@ -1,17 +1,17 @@
-from allison.nn.tensor import Tensor
+from allison.tensor.tensor import tensor
 import numpy as np
-from allison import _cupy_available
+from allison.cupy.cupy import _cupy_available
 
 if _cupy_available:
     import cupy as cp
 
 
 class Relu:
-    def __call__(self, X: Tensor):
+    def __call__(self, X: tensor):
 
         xp = cp if X.device == 'gpu' else np
 
-        out = Tensor(xp.maximum(0, X.data), (X,), 'ReLU',device=X.device,requires_grad=X.requires_grad)
+        out = tensor(xp.maximum(0, X.data), (X,), 'ReLU',device=X.device,requires_grad=X.requires_grad)
         
         def _backward():
             # Usar other.data para claridad
@@ -21,29 +21,34 @@ class Relu:
     
 
 class Linear:
-    def __init__(self, features: int, neurons: int):
+    def __init__(self, features: int, neurons: int,bias=True):
 
         self.std_dev = np.sqrt(2.0 / features)  # He init para ReLU
-        self.W = Tensor(np.random.normal(0, self.std_dev, size=(features, neurons)),requires_grad=True)
-        self.b = Tensor(np.zeros((1, neurons)),requires_grad=True)  # Bias inicializado en 0
+        self.bias = bias
+        self.W = tensor(np.random.normal(0, self.std_dev, size=(features, neurons)),requires_grad=True)
+        self.b = tensor(np.zeros((1, neurons)),requires_grad=True)  if self.bias else None
 
-    def __call__(self, X: Tensor):
-
-        return X @ self.W + self.b
+    def __call__(self, X: tensor):
+        if self.bias:
+            return X @ self.W + self.b  
+        return X @ self.W
     
     def to(self, device):
         self.W = self.W.to(device)
-        self.b = self.b.to(device)
+        if self.bias:
+            self.b = self.b.to(device)
         return self
     
     def parameters(self):
-        return [self.W, self.b]
+        if self.bias:
+            return [self.W, self.b] 
+        return [self.W]
 
 
 class BatchNorm1D:
     def __init__(self, features: int, alpha: float = 0.9, epsilon: float = 1e-5, device='cpu'):
-        self.gamma = Tensor(np.ones((1, features)), requires_grad=True)
-        self.beta = Tensor(np.zeros((1, features)), requires_grad=True)
+        self.gamma = tensor(np.ones((1, features)), requires_grad=True)
+        self.beta = tensor(np.zeros((1, features)), requires_grad=True)
 
         # buffers (no requieren gradiente)
         self.running_mean = np.zeros((1, features), dtype=np.float32)
@@ -54,7 +59,7 @@ class BatchNorm1D:
         self.device = device
         self.training = True
 
-    def __call__(self, X: Tensor):
+    def __call__(self, X: tensor):
         xp = cp if X.device == 'gpu' else np
 
         if self.training:

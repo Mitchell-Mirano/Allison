@@ -1,11 +1,11 @@
-from allison.nn.tensor import Tensor
+from allison.tensor.tensor import tensor
 
 class NeuralNetwork:
     def __init__(self):
         super().__init__()
         self.device = None
 
-    def forward(self, x: Tensor) -> Tensor:
+    def forward(self, x: tensor) -> tensor:
         raise NotImplementedError("Debes implementar forward en la subclase.")
 
     def parameters(self):
@@ -81,7 +81,7 @@ class NeuralNetwork:
         for v in self.__dict__.values():
             _apply(v)
 
-    def __call__(self, x: Tensor) -> Tensor:
+    def __call__(self, x: tensor) -> tensor:
         return self.forward(x)
     
     def weights(self):

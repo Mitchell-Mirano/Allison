@@ -1,7 +1,7 @@
+from allison.cupy.cupy import _cupy_available
 
 
-
-def is_cuda_available() -> bool:
+def is_available() -> bool:
     try:
         import cupy as cp
 
@@ -11,7 +11,8 @@ def is_cuda_available() -> bool:
             gpu_name = props['name'].decode("utf-8")  # decodificar nombre
             print("Current GPU:", gpu_name)
             print("CUDA runtime version:", cp.cuda.runtime.runtimeGetVersion())
-            print("CuPy version:", cp.__version__)
+            if _cupy_available:
+                print("CuPy version:", cp.__version__)
             return True
         else:
             print("Not GPU available")

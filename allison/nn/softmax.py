@@ -1,13 +1,13 @@
-from allison.nn.tensor import Tensor
+from allison.tensor.tensor import tensor
 import numpy as np
 
 
-def softmax(X: Tensor | np.ndarray) -> Tensor | np.ndarray:
+def softmax(X: tensor | np.ndarray) -> tensor | np.ndarray:
 
     exp_logits = np.exp(X.data - np.max(X.data, axis=-1, keepdims=True))
     probs = exp_logits / np.sum(exp_logits, axis=-1, keepdims=True)
 
-    if isinstance(X, Tensor):
-        return Tensor(probs)
+    if isinstance(X, tensor):
+        return tensor(probs)
     
     return probs

@@ -1,6 +1,6 @@
 import numpy as np
-from allison.nn.tensor import Tensor
-from allison import _cupy_available
+from allison.tensor.tensor import tensor
+from allison.cupy.cupy import _cupy_available
 
 if _cupy_available:
     import cupy as cp
@@ -16,7 +16,7 @@ class CrossEntropyLoss:
         self.one_hot = one_hot
         self.xp = np
 
-    def __call__(self, y_real: Tensor, y_pred: Tensor) -> Tensor:
+    def __call__(self, y_real: tensor, y_pred: tensor) -> tensor:
 
         self.xp = cp if y_pred.device == 'gpu' else np
 
@@ -35,7 +35,7 @@ class CrossEntropyLoss:
             loss_val = self.xp.mean(correct_log_probs)
         
         # Paso 3: Crear el Tensor de pérdida para el backpropagation
-        out = Tensor(loss_val, (y_pred,), 'CrossEntropyLoss',device=y_pred.device,requires_grad=y_pred.requires_grad)
+        out = tensor(loss_val, (y_pred,), 'CrossEntropyLoss',device=y_pred.device,requires_grad=y_pred.requires_grad)
 
         # Paso 4: Unificar el backpropagation
         def _backward():

@@ -1,14 +1,14 @@
 import numpy as np
-from allison.nn.tensor import Tensor
+from allison.tensor.tensor import tensor
 
 
 
 def r2_score(Y_true, Y_pred):
 
-    if isinstance(Y_true, Tensor):
+    if isinstance(Y_true, tensor):
         Y_true = Y_true.data
 
-    if isinstance(Y_pred, Tensor):
+    if isinstance(Y_pred, tensor):
         Y_pred = Y_pred.data
 
     sr = ((Y_true-Y_pred)**2).mean()
@@ -18,10 +18,10 @@ def r2_score(Y_true, Y_pred):
 
 def accuracy(Y_true, Y_pred):
 
-    if isinstance(Y_true, Tensor):
+    if isinstance(Y_true, tensor):
         Y_true = Y_true.data
 
-    if isinstance(Y_pred, Tensor):
+    if isinstance(Y_pred, tensor):
         Y_pred = Y_pred.data
 
     
