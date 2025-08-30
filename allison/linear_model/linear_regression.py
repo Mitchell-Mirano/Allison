@@ -10,7 +10,7 @@ from allison.metrics import r2_score
 
 
 class LinearRegression:
-    def __init__(self,optimizer='RMSprop',lr=0.01,epsilon=1e-3):
+    def __init__(self,optimizer='RMSprop',lr=0.001,epsilon=1e-6):
         self._linear: Linear = None
         self._optimizer_name = optimizer
         self._optimizer = None
@@ -107,7 +107,7 @@ class LinearRegression:
         if self._linear.W.data.shape[0] > 1:
             return self._linear.W.data.flatten()
         else:
-            return self._linear.W.data[0][0]
+            return self._linear.W.data[0]
 
     @property
     def intercept_(self):

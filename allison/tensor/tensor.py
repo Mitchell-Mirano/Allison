@@ -34,10 +34,6 @@ class tensor:
         xp = cp if (device == 'gpu' and _cupy_available) else np
 
         if isinstance(data, (list, tuple,np.ndarray,pd.DataFrame, pd.Series)):
-            
-            if isinstance(data,(np.ndarray, pd.Series)) and data.ndim == 1:
-
-                data = data.reshape(-1,1)
 
             data = xp.array(data)
 

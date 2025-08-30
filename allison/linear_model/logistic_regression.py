@@ -1,18 +1,17 @@
 import pandas as pd
 import numpy as np
 import allison
-from allison.nn.loss import CrossEntropyLoss
+from allison.nn.loss import BCEWithLogitsLoss
 from allison.nn.layers import Linear
 from allison.optim.optim import RMSprop,Adam
 from allison.tensor.tensor import tensor
-from allison.nn import softmax
 
 class LogisticRegression:
-    def __init__(self,optimizer='RMSprop',lr=0.01,epsilon=1e-3):
+    def __init__(self,optimizer='RMSprop',lr=0.01,epsilon=1e-6):
         self._linear: Linear = None
         self._optimizer_name = optimizer
         self._optimizer = None
-        self._loss = CrossEntropyLoss()
+        self._loss = BCEWithLogitsLoss()
         self._features_names = None
         self.lr = lr
         self.epsilon = epsilon
@@ -61,8 +60,7 @@ class LogisticRegression:
         X = self._to_tensor(X)
         Y = self._to_tensor(Y)
         n_features = X.shape[1]
-        n_labels = len(np.unique(Y.data))
-        self._linear = Linear(n_features, n_labels)
+        self._linear = Linear(n_features, 1)
         
         if self._optimizer_name == 'Adam':
             self._optimizer = Adam(self._linear.parameters(), lr=self.lr)
@@ -74,8 +72,8 @@ class LogisticRegression:
 
         for itr in range(iters + 1):
 
-            y_pred = self._linear(X)
-            loss = self._loss(Y, y_pred)
+            logits = self._linear(X)
+            loss = self._loss(logits, Y)
             
             self._optimizer.zero_grad()
             loss.backward()
@@ -94,15 +92,22 @@ class LogisticRegression:
         
         X = self._to_tensor(X)
         with allison.no_grad():
-            out = self._linear(X)
-        return out.data.argmax(axis=1, keepdims=True).flatten()
+            logits   = self._linear(X)
+        
+        probs = allison.sigmoid(logits)
+        preds = (probs.data > 0.5)
+        preds = preds.astype('uint8')
+
+        return preds.flatten()
     
     def predict_proba(self, X):
         
         X = self._to_tensor(X)
+
         with allison.no_grad():
-            out = self._linear(X)
-        return softmax(out).data.round(2)
+            logits   = self._linear(X)
+        probs = allison.sigmoid(logits)
+        return probs.data.flatten().round(2)
     
     def score(self, X, Y):
         Y = self._to_tensor(Y)
@@ -116,7 +121,7 @@ class LogisticRegression:
     @property
     def coef_(self):
         if self._linear.W.data.shape[0] > 1:
-            return self._linear.W.data
+            return self._linear.W.data.flatten()
         else:
             return self._linear.W.data[0][0]
 
