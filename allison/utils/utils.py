@@ -6,7 +6,7 @@ if _cupy_available:
     import cupy as cp
 
 
-def sigmoid(X: tensor | np.ndarray| cp.ndarray) -> tensor | np.ndarray:
+def sigmoid(X) -> tensor | np.ndarray:
 
     if isinstance(X, tensor):
         xp = cp if X.device == 'gpu' and _cupy_available else np
@@ -22,7 +22,7 @@ def sigmoid(X: tensor | np.ndarray| cp.ndarray) -> tensor | np.ndarray:
     return 1 / (1 + xp.exp(-X.data))
 
 
-def softmax(X: tensor | np.ndarray | cp.ndarray, axis=1, keepdims=True) -> tensor | np.ndarray:
+def softmax(X, axis=1, keepdims=True) -> tensor | np.ndarray:
 
     if isinstance(X, tensor):
         xp = cp if X.device == 'gpu' and _cupy_available else np
