@@ -7,16 +7,33 @@ if _cupy_available:
 
 
 class MSELoss:
-    def __call__(self, y_real, y_pred):
-        return ((y_real - y_pred)**2).mean()
+    def __call__(self, y_pred: tensor, y_real: tensor):
+        return ((y_pred - y_real)**2).mean()
     
 
+class BCEWithLogitsLoss:
+    def __call__(self, y_pred: tensor, y_real: tensor) -> tensor:
+        xp = cp if y_pred.device == 'gpu' else np
+
+        batch_size = y_real.data.shape[0]
+
+        probs = 1 / (1 + xp.exp(-y_pred.data))
+        loss_val = -xp.mean(y_real.data * xp.log(probs) + (1 - y_real.data) * xp.log(1 - probs))
+        out = tensor(loss_val, (y_pred,), 'BCELossWithLogits',device=y_pred.device,requires_grad=y_pred.requires_grad)
+        
+        def _backward():
+            # Usar other.data para claridad
+            y_pred.grad += out.grad * (probs- y_real.data)/batch_size
+        out._backward = _backward
+        return out
+
+    
 class CrossEntropyLoss:
     def __init__(self, one_hot=False):
         self.one_hot = one_hot
         self.xp = np
 
-    def __call__(self, y_real: tensor, y_pred: tensor) -> tensor:
+    def __call__(self, y_pred: tensor, y_real: tensor) -> tensor:
 
         self.xp = cp if y_pred.device == 'gpu' else np
 

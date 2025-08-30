@@ -1,4 +1,3 @@
-from .layers import Linear,Relu,BatchNorm1D
+from .layers import Linear,Relu,Sigmoid,Tanh,BatchNorm1D
 from .net import NeuralNetwork
-from .loss import MSELoss,CrossEntropyLoss
-from .softmax import softmax
+from .loss import MSELoss,BCEWithLogitsLoss,CrossEntropyLoss

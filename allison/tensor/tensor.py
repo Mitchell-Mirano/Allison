@@ -23,6 +23,7 @@ def _noop():
 
 
 class tensor:
+
     def __init__(self, data, _children=(), _op='',device='cpu',requires_grad=False):
 
         
@@ -33,6 +34,11 @@ class tensor:
         xp = cp if (device == 'gpu' and _cupy_available) else np
 
         if isinstance(data, (list, tuple,np.ndarray,pd.DataFrame, pd.Series)):
+            
+            if data.ndim == 1:
+
+                data = data.reshape(-1,1)
+
             data = xp.array(data)
 
         self.data = data
@@ -85,13 +91,12 @@ class tensor:
 
         return self 
 
-    def to_cpu(self):
+    def cpu(self):
         return self.to("cpu")
 
-    def to_gpu(self):
+    def gpu(self):
         return self.to("gpu")
         
-
 
     def __add__(self, other):
         other = other if isinstance(other, tensor) else tensor(other)
@@ -304,6 +309,9 @@ class tensor:
         return grad
     
 
+    def __iter__(self):
+        return iter(self.data)
+
     def __str__(self) -> str:
         return f"Tensor(\n{self.data}, shape={self.data.shape}, device={self.device}, requires_grad={self.requires_grad})"
 
@@ -328,3 +336,6 @@ class tensor:
     
     def to_numpy(self):
         return self.data if self.device == 'cpu' else self.data.get()   
+
+    def item(self):
+        return self.data.item()

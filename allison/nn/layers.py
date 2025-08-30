@@ -4,26 +4,19 @@ from allison.cupy.cupy import _cupy_available
 
 if _cupy_available:
     import cupy as cp
-
-
-class Relu:
-    def __call__(self, X: tensor):
-
-        xp = cp if X.device == 'gpu' else np
-
-        out = tensor(xp.maximum(0, X.data), (X,), 'ReLU',device=X.device,requires_grad=X.requires_grad)
-        
-        def _backward():
-            # Usar other.data para claridad
-            X.grad += out.grad * (X.data > 0)
-        out._backward = _backward
-        return out
     
 
 class Linear:
-    def __init__(self, features: int, neurons: int,bias=True):
+    def __init__(self, features: int, neurons: int,bias=True, init='he'):
+        
+        if init not in ['he', 'xavier']:
+            raise ValueError(f'Invalid initialization method: {init}. Valid methods are "he" and "xavier"')
+        
+        if init == 'he':
+            self.std_dev = np.sqrt(2.0 / features)  # He init para ReLU
+        elif init == 'xavier':
+            self.std_dev = np.sqrt(2.0 / (features + neurons))  # Xavier init para tanh
 
-        self.std_dev = np.sqrt(2.0 / features)  # He init para ReLU
         self.bias = bias
         self.W = tensor(np.random.normal(0, self.std_dev, size=(features, neurons)),requires_grad=True)
         self.b = tensor(np.zeros((1, neurons)),requires_grad=True)  if self.bias else None
@@ -44,6 +37,47 @@ class Linear:
             return [self.W, self.b] 
         return [self.W]
 
+
+class Relu:
+    def __call__(self, X: tensor):
+
+        xp = cp if X.device == 'gpu' else np
+
+        out = tensor(xp.maximum(0, X.data), (X,), 'ReLU',device=X.device,requires_grad=X.requires_grad)
+        
+        def _backward():
+            # Usar other.data para claridad
+            X.grad += out.grad * (X.data > 0)
+        out._backward = _backward
+        return out
+
+
+class Sigmoid:
+    def __call__(self, X: tensor):
+
+        xp = cp if X.device == 'gpu' else np
+
+        out = tensor(1 / (1 + xp.exp(-X.data)), (X,), 'Sigmoid',device=X.device,requires_grad=X.requires_grad)
+        
+        def _backward():
+            # Usar other.data para claridad
+            X.grad += out.grad * out.data * (1 - out.data)
+        out._backward = _backward
+        return out
+    
+    
+class Tanh:
+    def __call__(self, X: tensor):
+
+        xp = cp if X.device == 'gpu' else np
+
+        out = tensor(xp.tanh(X.data), (X,), 'Tanh',device=X.device,requires_grad=X.requires_grad)
+        
+        def _backward():
+            # Usar other.data para claridad
+            X.grad += out.grad * (1 - out.data**2)
+        out._backward = _backward
+        return out
 
 class BatchNorm1D:
     def __init__(self, features: int, alpha: float = 0.9, epsilon: float = 1e-5, device='cpu'):
