@@ -39,7 +39,7 @@ def softmax(X, axis=1, keepdims=True) -> tensor | np.ndarray:
     return probs
 
 
-def argmax(X: tensor | np.ndarray | cp.ndarray, axis=1, keepdims=True) -> tensor | np.ndarray:
+def argmax(X, axis=1, keepdims=True) -> tensor | np.ndarray:
 
     if isinstance(X, tensor):
         xp = cp if X.device == 'gpu' and _cupy_available else np
