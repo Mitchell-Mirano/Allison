@@ -35,7 +35,7 @@ class tensor:
 
         if isinstance(data, (list, tuple,np.ndarray,pd.DataFrame, pd.Series)):
             
-            if data.ndim == 1:
+            if isinstance(data,(np.ndarray, pd.Series)) and data.ndim == 1:
 
                 data = data.reshape(-1,1)
 
