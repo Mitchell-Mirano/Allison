@@ -318,6 +318,9 @@ class tensor:
     def shape(self):
         return self.data.shape
     
+    def reshape(self, *shape):
+        return tensor(self.data.reshape(*shape),device=self.device)
+    
     @property
     def ndim(self):
         return self.data.ndim
@@ -335,3 +338,6 @@ class tensor:
 
     def item(self):
         return self.data.item()
+    
+    def __array__(self):
+        return self.to_numpy()

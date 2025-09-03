@@ -12,7 +12,7 @@ def is_available() -> bool:
             print("Current GPU:", gpu_name)
             print("CUDA runtime version:", cp.cuda.runtime.runtimeGetVersion())
             if _cupy_available:
-                print("CuPy version:", cp.__version__)
+                print("Backend: CuPy, version:", cp.__version__)
             return True
         else:
             print("Not GPU available")

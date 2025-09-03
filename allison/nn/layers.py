@@ -7,19 +7,26 @@ if _cupy_available:
     
 
 class Linear:
-    def __init__(self, features: int, neurons: int,bias=True, init='he'):
+    def __init__(self, features: int, neurons: int,bias=True, init='he',device='cpu'):
+
+        if device == 'gpu' and not _cupy_available:
+            raise Exception('Cupy is not available')
+        
+        self.device = device
+
+        xp = cp if device == 'gpu' else np
         
         if init not in ['he', 'xavier']:
             raise ValueError(f'Invalid initialization method: {init}. Valid methods are "he" and "xavier"')
         
         if init == 'he':
-            self.std_dev = np.sqrt(2.0 / features)  # He init para ReLU
+            self.std_dev = xp.sqrt(2.0 / features)  # He init para ReLU
         elif init == 'xavier':
-            self.std_dev = np.sqrt(2.0 / (features + neurons))  # Xavier init para tanh
+            self.std_dev = xp.sqrt(2.0 / (features + neurons))  # Xavier init para tanh
 
         self.bias = bias
-        self.W = tensor(np.random.normal(0, self.std_dev, size=(features, neurons)),requires_grad=True)
-        self.b = tensor(np.zeros((1, neurons)),requires_grad=True)  if self.bias else None
+        self.W = tensor(xp.random.normal(0, self.std_dev, size=(features, neurons)),device=self.device,requires_grad=True)
+        self.b = tensor(xp.zeros((1, neurons)),device=self.device,requires_grad=True)  if self.bias else None
 
     def __call__(self, X: tensor):
         if self.bias:
@@ -27,15 +34,29 @@ class Linear:
         return X @ self.W
     
     def to(self, device):
+
+        if device == self.device:
+            return self
+        
         self.W = self.W.to(device)
+
         if self.bias:
             self.b = self.b.to(device)
+        self.device = device
         return self
     
     def parameters(self):
         if self.bias:
             return [self.W, self.b] 
         return [self.W]
+    
+    @property
+    def coef_(self):
+        return self.W.data.flatten()
+        
+    @property
+    def intercept_(self):
+        return self.b.item()
 
 
 class Relu:
