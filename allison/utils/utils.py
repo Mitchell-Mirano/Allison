@@ -47,3 +47,182 @@ def argmax(X, axis=1, keepdims=True) -> tensor | np.ndarray:
     else:
         xp = cp if isinstance(X, cp.ndarray) else np
         return X.argmax(axis=axis, keepdims=keepdims)
+    
+
+def as_tensor(x):
+    if isinstance(x, tensor):
+        return x
+
+    return tensor(x)
+
+def from_numpy(x):
+    if isinstance(x, tensor):
+        return x
+
+    return tensor(x)
+
+def zeros(*args,device='cpu',requires_grad=False):
+
+    if device == 'gpu' and not _cupy_available:
+        raise Exception('Cupy is not available')
+    
+    xp = cp if device == 'gpu' and _cupy_available else np
+
+    return tensor(xp.zeros(*args),device=device,requires_grad=requires_grad)
+
+
+def ones(*args,device='cpu',requires_grad=False):
+
+    if device == 'gpu' and not _cupy_available:
+        raise Exception('Cupy is not available')
+    
+    xp = cp if device == 'gpu' and _cupy_available else np
+
+    return tensor(xp.ones(*args),device=device,requires_grad=requires_grad) 
+
+
+def full(*args,device='cpu',requires_grad=False):
+
+    if device == 'gpu' and not _cupy_available:
+        raise Exception('Cupy is not available')
+    
+    xp = cp if device == 'gpu' and _cupy_available else np
+
+    return tensor(xp.full(*args),device=device,requires_grad=requires_grad)
+
+
+def eye(*args,device='cpu',requires_grad=False):
+
+    if device == 'gpu' and not _cupy_available:
+        raise Exception('Cupy is not available')
+    
+    xp = cp if device == 'gpu' and _cupy_available else np
+
+    return tensor(xp.eye(*args),device=device,requires_grad=requires_grad)
+
+def diag(*args,device='cpu',requires_grad=False):
+
+    if device == 'gpu' and not _cupy_available:
+        raise Exception('Cupy is not available')
+    
+    xp = cp if device == 'gpu' and _cupy_available else np
+
+    return tensor(xp.diag(*args),device=device,requires_grad=requires_grad)
+
+
+def arange(*args,device='cpu',requires_grad=False):
+
+    if device == 'gpu' and not _cupy_available:
+        raise Exception('Cupy is not available')
+    
+    xp = cp if device == 'gpu' and _cupy_available else np
+
+    return tensor(xp.arange(*args),device=device,requires_grad=requires_grad)
+
+def linspace(*args,device='cpu',requires_grad=False):
+
+    if device == 'gpu' and not _cupy_available:
+        raise Exception('Cupy is not available')
+    
+    xp = cp if device == 'gpu' and _cupy_available else np
+
+    return tensor(xp.linspace(*args),device=device,requires_grad=requires_grad)
+
+def logspace(*args,device='cpu',requires_grad=False):
+
+    if device == 'gpu' and not _cupy_available:
+        raise Exception('Cupy is not available')
+    
+    xp = cp if device == 'gpu' and _cupy_available else np
+
+    return tensor(xp.logspace(*args),device=device,requires_grad=requires_grad)
+
+
+
+
+def rand(*args,device='cpu',requires_grad=False):
+
+    if device == 'gpu' and not _cupy_available:
+        raise Exception('Cupy is not available')
+    
+    xp = cp if device == 'gpu' and _cupy_available else np
+
+    return tensor(xp.random.rand(*args),device=device,requires_grad=requires_grad)
+
+
+def randn(*args,device='cpu',requires_grad=False):
+
+    if device == 'gpu' and not _cupy_available:
+        raise Exception('Cupy is not available')
+    
+    xp = cp if device == 'gpu' and _cupy_available else np
+
+    return tensor(xp.random.randn(*args),device=device,requires_grad=requires_grad)
+
+def randint(*args,device='cpu',requires_grad=False):
+
+    if device == 'gpu' and not _cupy_available:
+        raise Exception('Cupy is not available')
+    
+    xp = cp if device == 'gpu' and _cupy_available else np
+
+    return tensor(xp.random.randint(*args),device=device,requires_grad=requires_grad)
+
+
+def randperm(*args,device='cpu',requires_grad=False):
+
+    if device == 'gpu' and not _cupy_available:
+        raise Exception('Cupy is not available')
+    
+    xp = cp if device == 'gpu' and _cupy_available else np
+
+    return tensor(xp.random.permutation(*args),device=device,requires_grad=requires_grad)
+
+
+def zeros_like(*args,device='cpu',requires_grad=False):
+
+    if device == 'gpu' and not _cupy_available:
+        raise Exception('Cupy is not available')
+    
+    xp = cp if device == 'gpu' and _cupy_available else np
+
+    return tensor(xp.zeros_like(*args),device=device,requires_grad=requires_grad)
+
+
+def ones_like(*args,device='cpu',requires_grad=False):
+
+    if device == 'gpu' and not _cupy_available:
+        raise Exception('Cupy is not available')
+    
+    xp = cp if device == 'gpu' and _cupy_available else np
+
+    return tensor(xp.ones_like(*args),device=device,requires_grad=requires_grad)
+
+def empty_like(*args,device='cpu',requires_grad=False):
+
+    if device == 'gpu' and not _cupy_available:
+        raise Exception('Cupy is not available')
+    
+    xp = cp if device == 'gpu' and _cupy_available else np
+
+    return tensor(xp.empty_like(*args),device=device,requires_grad=requires_grad)
+
+
+def full_like(*args,device='cpu',requires_grad=False):
+
+    if device == 'gpu' and not _cupy_available:
+        raise Exception('Cupy is not available')
+    
+    xp = cp if device == 'gpu' and _cupy_available else np
+
+    return tensor(xp.full_like(*args),device=device,requires_grad=requires_grad)
+
+
+def arange(*args,device='cpu',requires_grad=False):
+
+    if device == 'gpu' and not _cupy_available:
+        raise Exception('Cupy is not available')
+    
+    xp = cp if device == 'gpu' and _cupy_available else np
+
+    return tensor(xp.arange(*args),device=device,requires_grad=requires_grad)
