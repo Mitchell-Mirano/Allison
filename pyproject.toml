@@ -3,32 +3,38 @@ name = "allison"
 version = "0.1.0"
 description = "A Machine Learning library for begainers"
 authors = [
-{name = "Mitchell Mirano", email = "mitchellmirano25@gmail.com"},
+  {name = "Mitchell Mirano", email = "mitchellmirano25@gmail.com"},
 ]
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-"numpy>=2.0,<3.0",
+    # No se incluye numpy aquí. El usuario lo obtendrá del grupo opcional o lo instalará si es solo para CPU.
 ]
 
 [dependency-groups]
 dev = [
-"joblib>=1.5.1",
-"jupyter>=1.1.1",
-"matplotlib>=3.10.3",
-"pytest>=8.4.1",
-"scikit-learn>=1.7.1",
-"seaborn>=0.13.2",
+    "joblib>=1.5.1",
+    "jupyter>=1.1.1",
+    "matplotlib>=3.10.3",
+    "pytest>=8.4.1",
+    "scikit-learn>=1.7.1",
+    "seaborn>=0.13.2",
 ]
 
 [project.optional-dependencies]
+# Para entornos como Colab con CUDA 12.x y numpy < 2.0
 gpu = [
-# Para Colab (CUDA 12.x runtime)
-# Requerirá CuPy versión 13.x o superior para ser compatible con numpy 2.0+
-"cupy-cuda12x>=13.0",
+    "cupy-cuda12x>=12.0,<13.0",
+    "numpy>=1.20,<2.0",
 ]
+# Para entornos locales con CUDA 13.x y numpy >= 2.0
 gpu13 = [
-# Para local si tienes CUDA 13.x
-# Requerirá CuPy versión 13.x o superior para ser compatible con numpy 2.0+
-"cupy-cuda13x>=13.0",
+    "cupy-cuda13x>=13.0",
+    "numpy>=2.0,<3.0",
+]
+
+# Un grupo adicional para usuarios que solo usan CPU
+# Esto asegura que numpy se instale incluso sin GPU
+cpu = [
+    "numpy>=2.0",
 ]
