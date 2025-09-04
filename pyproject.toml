@@ -23,5 +23,10 @@ dev = [
 
 [project.optional-dependencies]
 gpu = [
-    "cupy-cuda12x>=12.0,<14.0",
+    # Para Colab (CUDA 12.x runtime)
+    "cupy-cuda12x>=13.0,<14.0",
+]
+gpu13 = [
+    # Para local si tienes CUDA 13.x
+    "cupy-cuda13x>=13.0,<14.0",
 ]
