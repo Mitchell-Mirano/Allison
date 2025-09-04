@@ -15,12 +15,11 @@ dependencies = [
 [project.optional-dependencies]
 # Para desarrollo (sin GPU)
 dev = [
-    "jupyter>=1.1.1",
-    "matplotlib>=3.10.3",
-    "pytest>=8.4.1",
-    "scikit-learn>=1.7.1",
-    "seaborn>=0.13.2",
+    "jupyter",
+    "matplotlib",
+    "seaborn",
     "pandas",
+    "joblib"
 ]
 
 # Para usuarios que solo usan CPU
