@@ -110,6 +110,15 @@ def diag(*args,device='cpu',requires_grad=False):
     return tensor(xp.diag(*args),device=device,requires_grad=requires_grad)
 
 
+def empty(*args,device='cpu',requires_grad=False):
+
+    if device == 'gpu' and not _cupy_available:
+        raise Exception('Cupy is not available')
+    
+    xp = cp if device == 'gpu' and _cupy_available else np
+
+    return tensor(xp.empty(*args),device=device,requires_grad=requires_grad)
+
 def arange(*args,device='cpu',requires_grad=False):
 
     if device == 'gpu' and not _cupy_available:
@@ -216,13 +225,3 @@ def full_like(*args,device='cpu',requires_grad=False):
     xp = cp if device == 'gpu' and _cupy_available else np
 
     return tensor(xp.full_like(*args),device=device,requires_grad=requires_grad)
-
-
-def arange(*args,device='cpu',requires_grad=False):
-
-    if device == 'gpu' and not _cupy_available:
-        raise Exception('Cupy is not available')
-    
-    xp = cp if device == 'gpu' and _cupy_available else np
-
-    return tensor(xp.arange(*args),device=device,requires_grad=requires_grad)
