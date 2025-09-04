@@ -8,7 +8,14 @@ authors = [
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    # No se incluye numpy aquí. El usuario lo obtendrá del grupo opcional o lo instalará si es solo para CPU.
+    "numpy>=2.0,<3.0",
+]
+
+
+[project.optional-dependencies]
+cp13= [
+    # Para local si tienes CUDA 13.x
+    "cupy-cuda13x>=13.0,<14.0",
 ]
 
 [dependency-groups]
@@ -19,22 +26,4 @@ dev = [
     "pytest>=8.4.1",
     "scikit-learn>=1.7.1",
     "seaborn>=0.13.2",
-]
-
-[project.optional-dependencies]
-# Para entornos como Colab con CUDA 12.x y numpy < 2.0
-gpu = [
-    "cupy-cuda12x>=12.0,<13.0",
-    "numpy>=1.20,<2.0",
-]
-# Para entornos locales con CUDA 13.x y numpy >= 2.0
-gpu13 = [
-    "cupy-cuda13x>=13.0",
-    "numpy>=2.0,<3.0",
-]
-
-# Un grupo adicional para usuarios que solo usan CPU
-# Esto asegura que numpy se instale incluso sin GPU
-cpu = [
-    "numpy>=2.0",
 ]
