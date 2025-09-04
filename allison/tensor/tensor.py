@@ -345,8 +345,11 @@ class tensor:
     def flatten(self):
         return tensor(self.data.flatten(),device=self.device)
     
-    def __array__(self):
-        return self.to_numpy()
+    def __array__(self, dtype=None):
+        arr = self.to_numpy()
+        if dtype is not None:
+            return arr.astype(dtype)
+        return arr 
     
    # Comparaciones
     def __gt__(self, other):
