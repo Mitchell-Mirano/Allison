@@ -8,22 +8,32 @@ authors = [
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "numpy>=2.0,<3.0",
+    # Las dependencias base deben ir aquí, si las hubiera.
+    # No se incluye numpy aquí para evitar conflictos con los grupos opcionales.
 ]
-
 
 [project.optional-dependencies]
-cp13= [
-    # Para local si tienes CUDA 13.x
-    "cupy-cuda13x>=13.0,<14.0",
-]
-
-[dependency-groups]
+# Para desarrollo (sin GPU)
 dev = [
-    "joblib>=1.5.1",
     "jupyter>=1.1.1",
     "matplotlib>=3.10.3",
     "pytest>=8.4.1",
     "scikit-learn>=1.7.1",
     "seaborn>=0.13.2",
+    "pandas",
+]
+
+# Para usuarios que solo usan CPU
+cpu = [
+    "numpy>=2.0",
+]
+# Para CUDA 12.x (Colab)
+cp12 = [
+    "cupy-cuda12x>=12.0,<13.0",
+    "numpy>=1.20,<2.0",
+]
+# Para CUDA 13.x
+cp13 = [
+    "cupy-cuda13x>=13.0",
+    "numpy>=2.0,<3.0",
 ]
