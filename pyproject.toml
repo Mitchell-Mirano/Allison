@@ -8,31 +8,21 @@ authors = [
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    # Las dependencias base deben ir aquí, si las hubiera.
-    # No se incluye numpy aquí para evitar conflictos con los grupos opcionales.
+   "numpy>=2.0",
 ]
 
 [project.optional-dependencies]
-# Para desarrollo (sin GPU)
-dev = [
-    "jupyter",
-    "matplotlib",
-    "seaborn",
-    "pandas",
-    "joblib"
-]
 
-# Para usuarios que solo usan CPU
-cpu = [
-    "numpy>=2.0",
-]
-# Para CUDA 12.x (Colab)
-cp12 = [
-    "cupy-cuda12x>=12.0,<13.0",
-    "numpy>=1.20,<2.0",
-]
 # Para CUDA 13.x
 cp13 = [
     "cupy-cuda13x>=13.0",
     "numpy>=2.0,<3.0",
+]
+
+[dependency-groups]
+dev = [
+    "joblib>=1.5.2",
+    "jupyter>=1.1.1",
+    "matplotlib>=3.10.6",
+    "seaborn>=0.13.2",
 ]
