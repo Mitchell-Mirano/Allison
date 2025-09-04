@@ -17,7 +17,7 @@ def sigmoid(X) -> tensor | np.ndarray:
         probs = 1 / (1 + xp.exp(-X))
 
     if isinstance(X, tensor):
-        return tensor(probs)
+        return tensor(probs,device=X.device)
     
     return 1 / (1 + xp.exp(-X.data))
 
@@ -34,7 +34,7 @@ def softmax(X, axis=1, keepdims=True) -> tensor | np.ndarray:
         probs = exp_logits / xp.sum(exp_logits, axis=axis, keepdims=keepdims)
 
     if isinstance(X, tensor):
-        return tensor(probs)
+        return tensor(probs,device=X.device)
     
     return probs
 
