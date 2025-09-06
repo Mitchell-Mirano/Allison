@@ -5,55 +5,15 @@ from allison.tensor.tensor import tensor
 
 def r2_score(Y_true, Y_pred):
 
-    if isinstance(Y_true, tensor):
-        Y_true = Y_true.data
-
-    if isinstance(Y_pred, tensor):
-        Y_pred = Y_pred.data
-
     sr = ((Y_true-Y_pred)**2).mean()
     sy = ((Y_true-Y_true.mean())**2).mean()
-    return 1-(sr/sy)
-
-
-def accuracy(Y_true, Y_pred):
-
-    if isinstance(Y_true, tensor):
-        Y_true = Y_true.data
-
-    if isinstance(Y_pred, tensor):
-        Y_pred = Y_pred.data
-
     
-    if Y_true.ndim==1:
-        return np.mean(Y_true==Y_pred)
-    return np.mean(np.sum(Y_true==Y_pred,axis=1)/Y_true.shape[1])
+    return (1-(sr/sy)).item()
 
-def recall(labels, predictions):
-    targets=list(set(labels))
-    tp=0
-    fn=0
 
-    for label, labels_pred in zip(labels, predictions):
-        if label==labels_pred and label==targets[0]:
-            tp=tp+1
+def accuracy_score(Y_true, Y_pred):
 
-        if label!=labels_pred and label==targets[0]:
-            fn=fn +1
-    return (tp/(tp+fn))*100
-
-def precision(labels, predictions):
-    targets=list(set(labels))
-    tp=0
-    ft=0
-
-    for label, labels_pred in zip(labels, predictions):
-        if label==labels_pred  and label==targets[0]:
-            tp=tp +1
-        if label!=labels_pred and  label==targets[1]:
-            ft =ft +1
-        
-    return (tp/(tp+ft))*100
+    return (Y_true==Y_pred).mean()
 
 
 

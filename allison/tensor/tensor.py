@@ -145,7 +145,30 @@ class tensor:
         return out
     
     def __rsub__(self, other):
-        return self.__sub__(other) 
+        other = other if isinstance(other, tensor) else tensor(other, device=self.device)
+
+        global _autograd_enabled
+
+        if not _autograd_enabled:
+            return tensor(other.data - self.data, device=self.device)
+        
+        requires_grad = self.requires_grad or other.requires_grad
+        out = tensor(other.data - self.data, [other, self], '-', device=self.device, requires_grad=requires_grad)
+
+        def _backward():
+            if out.grad is None:
+                return
+            
+            if other.requires_grad:
+                grad_other = tensor._match_shape(out.grad, other.data.shape)
+                other.grad += grad_other
+
+            if self.requires_grad:
+                grad_self = tensor._match_shape(out.grad, self.data.shape)
+                self.grad -= grad_self
+
+        out._backward = _backward
+        return out
 
     def __mul__(self, other):
         other = other if isinstance(other, tensor) else tensor(other, device=self.device)

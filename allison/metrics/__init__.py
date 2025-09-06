@@ -1,1 +1,1 @@
-from .metrics import recall, r2_score, classification_report, confusion_matrix,accuracy
+from .metrics import  r2_score,accuracy_score,confusion_matrix,classification_report
