@@ -1,21 +1,28 @@
-[tool.poetry]
+[project]
 name = "allison"
-version = "0.1.0"
+version = "1.1.1"
 description = "A Machine Learning library for begainers"
-authors = ["Mitchell Mirano <mitchellmirano25@gmail.com>"]
+authors = [
+  {name = "Mitchell Mirano", email = "mitchellmirano25@gmail.com"},
+]
 readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+   "numpy>=2.0",
+]
 
-[tool.poetry.dependencies]
-python = "^3.8"
-numpy = "^1.24.2"
+[project.optional-dependencies]
 
+# Para CUDA 13.x
+cp13 = [
+    "cupy-cuda13x>=13.0",
+    "numpy>=2.0,<3.0",
+]
 
-[tool.poetry.group.dev.dependencies]
-pandas = "^1.5.3"
-matplotlib = "^3.7.0"
-notebook = "^6.5.2"
-jupyterlab = "^3.6.1"
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+[dependency-groups]
+dev = [
+    "joblib>=1.5.2",
+    "jupyter>=1.1.1",
+    "matplotlib>=3.10.6",
+    "seaborn>=0.13.2",
+]
