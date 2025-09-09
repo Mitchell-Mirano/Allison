@@ -102,9 +102,9 @@ print("Learned bias:", model.intercept_)
 
 Explore the interactive examples:
 
-* [1 - Tensor Basics](https://github.com/Mitchell-Mirano/Allison/blob/develop/examples/basics/1-tensor.ipynb)
-* [2 - Regression](https://github.com/Mitchell-Mirano/Allison/blob/develop/examples/nn/1-regression.ipynb)
-* [3 - Neural Network Layers](https://github.com/Mitchell-Mirano/Allison/blob/develop/examples/basics/2-layers.ipynb)
+* [1 - Tensor Basics](https://github.com/Mitchell-Mirano/Allison/blob/main/examples/basics/1-tensor.ipynb)
+* [2 - Regression](https://github.com/Mitchell-Mirano/Allison/blob/main/examples/nn/1-regression.ipynb)
+* [3 - Neural Network Layers](https://github.com/Mitchell-Mirano/Allison/blob/main/examples/basics/2-layers.ipynb)
 
 👉 More examples available in the [examples folder](https://github.com/Mitchell-Mirano/Allison/tree/main/examples).
 
