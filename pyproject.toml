@@ -1,6 +1,6 @@
 [project]
 name = "allison"
-version = "0.1.0"
+version = "1.1.1"
 description = "A Machine Learning library for begainers"
 authors = [
   {name = "Mitchell Mirano", email = "mitchellmirano25@gmail.com"},
